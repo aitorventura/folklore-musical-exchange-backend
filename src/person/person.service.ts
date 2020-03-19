@@ -5,9 +5,8 @@ import { DataBaseConnection } from '../app.database';
 @Injectable()
 export class PersonService {
   constructor(private readonly dataBase: DataBaseConnection) {}
-  getPerson(): string {
-    //TODO acabar de hacer
-    return 'Toma este usuario';
+  getPeople()  {
+    return this.dataBase.getPeople();
   }
 
   createPerson(personDto: PersonDto) {

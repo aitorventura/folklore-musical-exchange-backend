@@ -6,9 +6,11 @@ import { PersonService } from '../person/person.service';
 export class PersonController {
     constructor(private readonly personService: PersonService) { }
     @Get()
-    getPerson() {
-        return this.personService.getPerson();
+    getPeople() {
+        return this.personService.getPeople();
     }
+
+    
 
     @Post('/create')
     async createPerson(@Body() personDto: PersonDto) {

@@ -22,6 +22,13 @@ export class DataBaseConnection {
     console.log(result);
   }
 
+  async getPeople(){
+    const result = await this.knex.select('*').from('Person');
+    console.log(result);
+    return result;
+
+
+  }
   async addNewPerson(personDto: PersonDto) {
     /*if(!personDto.image){
       personDto.image = null;
