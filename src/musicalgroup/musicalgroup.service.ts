@@ -6,7 +6,7 @@ import { DataBaseConnection } from '../app.database';
 export class MusicalGroupService {
   constructor(private readonly dataBase: DataBaseConnection) {}
 
-  getMusicalGroup() {
+  getMusicalGroups() {
     return this.dataBase.getGroups();
   }
 

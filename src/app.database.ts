@@ -17,13 +17,19 @@ export class DataBaseConnection {
   }
 
   async getGroups() {
-    const result = await this.knex.select('*').from('user');
-
+    const result = await this.knex
+      .select('*')
+      .from('MGroup')
+      .innerJoin('User', 'MGroup.id', 'User.id');
     console.log(result);
+    return result;
   }
 
   async getPeople() {
-    const result = await this.knex.select('*').from('Person');
+    const result = await this.knex
+      .select('*')
+      .from('Person')
+      .innerJoin('User', 'Person.id', 'User.id');
     console.log(result);
     return result;
   }
