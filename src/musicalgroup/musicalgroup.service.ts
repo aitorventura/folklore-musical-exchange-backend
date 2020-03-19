@@ -14,6 +14,10 @@ export class MusicalGroupService {
     this.dataBase.addNewMusicalGroup(musicalgroupDto);
   }
 
+  setMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    this.dataBase.setMusicalGroup(musicalgroupDto);
+  }
+
   deleteMusicalGroup(musicalgroupId: number) {
     this.dataBase.deleteMusicalGroup(musicalgroupId);
   }

@@ -22,12 +22,10 @@ export class DataBaseConnection {
     console.log(result);
   }
 
-  async getPeople(){
+  async getPeople() {
     const result = await this.knex.select('*').from('Person');
     console.log(result);
     return result;
-
-
   }
   async addNewPerson(personDto: PersonDto) {
     /*if(!personDto.image){
@@ -61,6 +59,13 @@ export class DataBaseConnection {
     let query = `INSERT INTO MGroup('id', 'name', 'description','members','nameType')
     VALUES (${idUser} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
 
+    console.log(query);
+    //FIXME: devolver true/false y añadir realmente a la BBDD
+  }
+
+  setMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    let query = `INSERT INTO MGroup('id', 'name', 'description','members','nameType')
+    VALUES (${musicalgroupDto.id} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
     console.log(query);
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
