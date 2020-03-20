@@ -10,8 +10,6 @@ export class PersonController {
         return this.personService.getPeople();
     }
 
-    
-
     @Post('/create')
     async createPerson(@Body() personDto: PersonDto) {
         return this.personService.createPerson(personDto);

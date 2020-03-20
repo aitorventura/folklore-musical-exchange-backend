@@ -33,25 +33,22 @@ export class DataBaseConnection {
     console.log(result);
     return result;
   }
+  
   async addNewPerson(personDto: PersonDto) {
-    /*if(!personDto.image){
-      personDto.image = null;
-    }else{
-      personDto.image = "'" + personDto.image + "'";
-    }*/
-
     personDto.image = null;
     personDto.role = 'PERSON';
 
-    this.addNewUser(personDto);
-    let idUser = await this.getIdUserByEmail(personDto.email);
-    console.log(idUser);
+    await (this.addNewUser(personDto));
 
-    let query = `INSERT INTO Person('id', 'name', 'surname')
+    let idUser = (await this.getIdUserByEmail(personDto.email));
+
+
+    let query = `INSERT INTO Person(id, name, surname)
     VALUES (${idUser} ,  '${personDto.name}' , '${personDto.surname}')`;
 
-    //FIXME: devolver true/false y añadir realmente a la BBDD
-    console.log(query);
+
+    await (this.knex.raw(query));
+    
   }
 
   /* Musical Groups */
@@ -62,7 +59,7 @@ export class DataBaseConnection {
     this.addNewUser(musicalgroupDto);
     let idUser = await this.getIdUserByEmail(musicalgroupDto.email);
 
-    let query = `INSERT INTO MGroup('id', 'name', 'description','members','nameType')
+    let query = `INSERT INTO MGroup(id, name, description,members,nameType)
     VALUES (${idUser} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
 
     console.log(query);
@@ -70,7 +67,7 @@ export class DataBaseConnection {
   }
 
   setMusicalGroup(musicalgroupDto: MusicalGroupDto) {
-    let query = `INSERT INTO MGroup('id', 'name', 'description','members','nameType')
+    let query = `INSERT INTO MGroup(id, name, description,members,nameType)
     VALUES (${musicalgroupDto.id} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
     console.log(query);
     //FIXME: devolver true/false y añadir realmente a la BBDD
@@ -83,29 +80,36 @@ export class DataBaseConnection {
 
   /* ---------------------- */
 
-  async addNewUser(userDto: UserDto) {
-    /*if(!userDto.image){
-      userDto.image = null;
-    }else{
-      userDto.image = "'" + userDto.image + "'";
-    }*/
-
-    let query = `INSERT INTO User('role', 'email', 'username', 'password', 'city', 'image')
+  async addNewUser(userDto: UserDto){
+    
+    try{
+        let query = `INSERT INTO User(role, email, username, password, city, image)
                 VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})`;
 
-    console.log(query);
+        
+        const result = await this.knex.raw(query);
+
+        return true;
+    
+    
+    
+     } catch(error){
+        return false;
+    };
+    
+ 
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 
   async getIdUserByEmail(email: string) {
-    let query = `SELECT id FROM User WHERE email = ${email}`;
+    let query = `SELECT id FROM User WHERE email = '${email}'`;
 
-    let result = await this.knex.raw(query);
 
-    console.log(result);
+    const result = await this.knex.raw(query);
 
-    return 1;
-    //FIXME: esto hay que cambiarlo, debería de devolver lo de la bbdd
+    const idPerson = result[0].map(x => x.id);
+
+    return idPerson;
   }
 }
 
