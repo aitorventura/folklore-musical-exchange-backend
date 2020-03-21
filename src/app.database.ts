@@ -30,10 +30,20 @@ export class DataBaseConnection {
       .select('*')
       .from('Person')
       .innerJoin('User', 'Person.id', 'User.id');
+    return result;
+  }
+
+  async getPerson(id: number) {
+    const result = await this.knex
+      .select('*')
+      .from('Person')
+      .innerJoin('User', 'Person.id', 'User.id')
+      .where({ id: `${id}` })
+    console.log("GetPerson->Database");
     console.log(result);
     return result;
   }
-  
+
   async addNewPerson(personDto: PersonDto) {
     personDto.image = null;
     personDto.role = 'PERSON';
@@ -48,7 +58,7 @@ export class DataBaseConnection {
 
 
     await (this.knex.raw(query));
-    
+
   }
 
   async updatePerson(personDto: PersonDto) {
@@ -97,24 +107,24 @@ export class DataBaseConnection {
 
   /* ---------------------- */
 
-  async addNewUser(userDto: UserDto){
-    
-    try{
-        let query = `INSERT INTO User(role, email, username, password, city, image)
+  async addNewUser(userDto: UserDto) {
+
+    try {
+      let query = `INSERT INTO User(role, email, username, password, city, image)
                 VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})`;
 
-        
-        const result = await this.knex.raw(query);
 
-        return true;
-    
-    
-    
-     } catch(error){
-        return false;
+      const result = await this.knex.raw(query);
+
+      return true;
+
+
+
+    } catch (error) {
+      return false;
     };
-    
- 
+
+
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 
