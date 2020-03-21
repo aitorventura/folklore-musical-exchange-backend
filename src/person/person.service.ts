@@ -4,7 +4,7 @@ import { DataBaseConnection } from '../app.database';
 
 @Injectable()
 export class PersonService {
-  constructor(private readonly dataBase: DataBaseConnection) { }
+  constructor(private readonly dataBase: DataBaseConnection) {}
   getPeople() {
     return this.dataBase.getPeople();
   }
@@ -21,4 +21,8 @@ export class PersonService {
     this.dataBase.updatePerson(personDto);
   }
 
+  deletePerson(id: number) {
+    console.log('Service ');
+    this.dataBase.deletePerson(id);
+  }
 }

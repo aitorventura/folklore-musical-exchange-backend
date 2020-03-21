@@ -20,7 +20,8 @@ export class DataBaseConnection {
     const result = await this.knex
       .select('*')
       .from('MGroup')
-      .innerJoin('User', 'MGroup.id', 'User.id');
+      .innerJoin('User', 'MGroup.id', 'User.id')
+      .where({ 'User.dateUnsubscribe': null });
     console.log(result);
     return result;
   }
@@ -29,7 +30,8 @@ export class DataBaseConnection {
     const result = await this.knex
       .select('*')
       .from('Person')
-      .innerJoin('User', 'Person.id', 'User.id');
+      .innerJoin('User', 'Person.id', 'User.id')
+      .where({ 'User.dateUnsubscribe': null });
     return result;
   }
 
@@ -38,8 +40,8 @@ export class DataBaseConnection {
       .select('*')
       .from('Person')
       .innerJoin('User', 'Person.id', 'User.id')
-      .where({ id: `${id}` })
-    console.log("GetPerson->Database");
+      .where({ 'Person.id': `${id}` });
+    console.log('GetPerson->Database');
     console.log(result);
     return result;
   }
@@ -48,17 +50,14 @@ export class DataBaseConnection {
     personDto.image = null;
     personDto.role = 'PERSON';
 
-    await (this.addNewUser(personDto));
+    await this.addNewUser(personDto);
 
-    let idUser = (await this.getIdUserByEmail(personDto.email));
-
+    let idUser = await this.getIdUserByEmail(personDto.email);
 
     let query = `INSERT INTO Person(id, name, surname)
     VALUES (${idUser} ,  '${personDto.name}' , '${personDto.surname}')`;
 
-
-    await (this.knex.raw(query));
-
+    await this.knex.raw(query);
   }
 
   async updatePerson(personDto: PersonDto) {
@@ -101,29 +100,44 @@ export class DataBaseConnection {
   }
 
   async deleteMusicalGroup(musicalgroupId: number) {
-    let query = `DELETE FROM MGroup WHERE id = ${musicalgroupId}`;
+    try {
+      let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${musicalgroupId}`;
+      /*let query = `DELETE FROM MGroup WHERE id = ${musicalgroupId}`;*/
+      const result = await this.knex.raw(query);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
     //FIXME: devolver true/false
+  }
+
+  async deletePerson(id: number) {
+    try {
+      console.log('Entro en la BBDD');
+      let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${id}`;
+
+      console.log('query ' + query);
+      const result = await this.knex.raw(query);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   /* ---------------------- */
 
   async addNewUser(userDto: UserDto) {
-
     try {
       let query = `INSERT INTO User(role, email, username, password, city, image)
                 VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})`;
 
-
       const result = await this.knex.raw(query);
 
       return true;
-
-
-
     } catch (error) {
       return false;
-    };
-
+    }
 
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
@@ -136,7 +150,6 @@ export class DataBaseConnection {
 
   async getIdUserByEmail(email: string) {
     let query = `SELECT id FROM User WHERE email = '${email}'`;
-
 
     const result = await this.knex.raw(query);
 
