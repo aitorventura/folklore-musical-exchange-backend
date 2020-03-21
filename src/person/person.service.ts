@@ -12,4 +12,9 @@ export class PersonService {
   createPerson(personDto: PersonDto) {
     this.dataBase.addNewPerson(personDto);
   }
+
+  updatePerson(personDto: PersonDto) {
+    this.dataBase.updatePerson(personDto);
+  }
+  
 }

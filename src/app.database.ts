@@ -51,6 +51,23 @@ export class DataBaseConnection {
     
   }
 
+  async updatePerson(personDto: PersonDto) {
+    personDto.image = null;
+    personDto.role = 'PERSON';
+
+    this.updateUser(personDto);
+
+    console.log(personDto.id);
+
+    let query = `UPDATE Person 
+                SET name = ${personDto.name}, 
+                  surname = ${personDto.surname}, 
+                WHERE id = ${personDto.id}`;
+
+    //FIXME: devolver true/false y añadir realmente a la BBDD
+    console.log(query);
+  }
+
   /* Musical Groups */
   async addNewMusicalGroup(musicalgroupDto: MusicalGroupDto) {
     musicalgroupDto.image = null;
@@ -99,6 +116,12 @@ export class DataBaseConnection {
     
  
     //FIXME: devolver true/false y añadir realmente a la BBDD
+  }
+
+  async updateUser(userDto: UserDto) {
+    let query = `UPDATE User('role', 'email', 'username', 'password', 'city', 'image')
+                SET VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})
+                WHERE id = '${userDto.id}'`;
   }
 
   async getIdUserByEmail(email: string) {
