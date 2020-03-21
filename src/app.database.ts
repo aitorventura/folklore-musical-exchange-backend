@@ -64,17 +64,26 @@ export class DataBaseConnection {
     personDto.image = null;
     personDto.role = 'PERSON';
 
-    this.updateUser(personDto);
 
-    console.log(personDto.id);
+    const updated = this.updateUser(personDto);
+
 
     let query = `UPDATE Person 
-                SET name = ${personDto.name}, 
-                  surname = ${personDto.surname}, 
+                SET name = '${personDto.name}', 
+                  surname = '${personDto.surname}' 
                 WHERE id = ${personDto.id}`;
 
-    //FIXME: devolver true/false y añadir realmente a la BBDD
-    console.log(query);
+    try{
+      if(updated){
+        this.knex.raw(query);
+        return true;
+      } else {
+        return false;
+      }
+      }catch(error) {
+      return false;
+    }
+
   }
 
   /* Musical Groups */
@@ -143,10 +152,22 @@ export class DataBaseConnection {
   }
 
   async updateUser(userDto: UserDto) {
-    let query = `UPDATE User('role', 'email', 'username', 'password', 'city', 'image')
-                SET VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})
+    let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}', image =  ${userDto.image}
                 WHERE id = '${userDto.id}'`;
-  }
+
+
+                try {
+                  await this.knex.raw(query);
+                  return true;
+               
+                }catch(error){
+                  return false;
+                
+                }
+  
+              }
+
+
 
   async getIdUserByEmail(email: string) {
     let query = `SELECT id FROM User WHERE email = '${email}'`;

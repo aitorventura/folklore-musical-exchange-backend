@@ -5,12 +5,12 @@ import { DataBaseConnection } from '../app.database';
 @Injectable()
 export class PersonService {
   constructor(private readonly dataBase: DataBaseConnection) {}
-  getPeople() {
-    return this.dataBase.getPeople();
+  async getPeople() {
+    return await this.dataBase.getPeople();
   }
 
-  getPerson(id: number) {
-    return this.dataBase.getPerson(id);
+  async getPerson(id: number) {
+    return  await this.dataBase.getPerson(id);
   }
 
   createPerson(personDto: PersonDto) {
