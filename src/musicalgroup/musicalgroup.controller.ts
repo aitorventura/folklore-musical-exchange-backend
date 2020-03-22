@@ -9,16 +9,21 @@ import {
 } from '@nestjs/common';
 import { MusicalGroupDto } from '../musicalgroup/musicalgroup.dto';
 import { MusicalGroupService } from '../musicalgroup/musicalgroup.service';
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Controller('musicalgroup')
 export class MusicalGroupController {
   constructor(private readonly musicalgroupService: MusicalGroupService) {}
 
   @Get() //FIXME: no pilla los datos, algo está mal enrutado.. meh
-  getMusicalGroups() {
+  async getMusicalGroups() {
     //TODO: ver como recoge la lista de grupos y acabar
-    return this.musicalgroupService.getMusicalGroups();
+    return await this.musicalgroupService.getMusicalGroups();
+  }
+
+  @Get(':id')
+  async getMusicalGroup(@Param('id') id: number) {
+    const result = await this.musicalgroupService.getMusicalGroup(id);
+    return result[0];
   }
 
   @Post('/create') //sí que va
@@ -31,8 +36,12 @@ export class MusicalGroupController {
     return this.musicalgroupService.deleteMusicalGroup(id);
   }
 
-  @Put() //TODO: acabar, se necesita id
-  async setMusicalGroup(@Body() musicalgroupDto: MusicalGroupDto) {
-    return this.musicalgroupService.setMusicalGroup(musicalgroupDto);
+  @Put(':id')
+  async updateMusicalGroup(
+    @Param('id') id: number,
+    @Body() musicalGroupDto: MusicalGroupDto,
+  ) {
+    musicalGroupDto.id = id;
+    return this.musicalgroupService.updateMusicalGroup(musicalGroupDto);
   }
 }

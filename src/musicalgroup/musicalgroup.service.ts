@@ -6,16 +6,20 @@ import { DataBaseConnection } from '../app.database';
 export class MusicalGroupService {
   constructor(private readonly dataBase: DataBaseConnection) {}
 
-  getMusicalGroups() {
-    return this.dataBase.getGroups();
+  async getMusicalGroups() {
+    return await this.dataBase.getGroups();
+  }
+
+  async getMusicalGroup(id: number) {
+    return await this.dataBase.getMusicalGroup(id);
   }
 
   createMusicalGroup(musicalgroupDto: MusicalGroupDto) {
     this.dataBase.addNewMusicalGroup(musicalgroupDto);
   }
 
-  setMusicalGroup(musicalgroupDto: MusicalGroupDto) {
-    this.dataBase.setMusicalGroup(musicalgroupDto);
+  updateMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    this.dataBase.updateMusicalGroup(musicalgroupDto);
   }
 
   deleteMusicalGroup(musicalgroupId: number) {

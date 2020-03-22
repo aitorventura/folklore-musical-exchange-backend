@@ -10,7 +10,7 @@ export class PersonService {
   }
 
   async getPerson(id: number) {
-    return  await this.dataBase.getPerson(id);
+    return await this.dataBase.getPerson(id);
   }
 
   createPerson(personDto: PersonDto) {

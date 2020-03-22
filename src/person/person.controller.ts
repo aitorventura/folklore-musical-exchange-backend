@@ -13,6 +13,7 @@ import { PersonService } from '../person/person.service';
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {}
+
   @Get()
   async getPeople() {
     return await this.personService.getPeople();
@@ -20,7 +21,7 @@ export class PersonController {
 
   @Get(':id')
   async getPerson(@Param('id') id: number) {
-    const result =  await (this.personService.getPerson(id));
+    const result = await this.personService.getPerson(id);
     return result[0];
   }
 
@@ -31,7 +32,7 @@ export class PersonController {
 
   @Put(':id')
   async updatePerson(@Param('id') id: number, @Body() personDto: PersonDto) {
-    console.log("Hago update desde el frontend");
+    console.log('Hago update desde el frontend');
     personDto.id = id;
     return this.personService.updatePerson(personDto);
   }

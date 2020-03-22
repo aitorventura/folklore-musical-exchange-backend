@@ -22,7 +22,6 @@ export class DataBaseConnection {
       .from('MGroup')
       .innerJoin('User', 'MGroup.id', 'User.id')
       .where({ 'User.dateUnsubscribe': null });
-    console.log(result);
     return result;
   }
 
@@ -41,7 +40,16 @@ export class DataBaseConnection {
       .from('Person')
       .innerJoin('User', 'Person.id', 'User.id')
       .where({ 'Person.id': `${id}` });
-    console.log('GetPerson->Database');
+    console.log(result);
+    return result;
+  }
+
+  async getMusicalGroup(id: number) {
+    const result = await this.knex
+      .select('*')
+      .from('MGroup')
+      .innerJoin('User', 'MGroup.id', 'User.id')
+      .where({ 'MGroup.id': `${id}` });
     console.log(result);
     return result;
   }
@@ -60,30 +68,69 @@ export class DataBaseConnection {
     await this.knex.raw(query);
   }
 
+  async updateUser(userDto: UserDto) {
+    console.log('Entro a cambiar user');
+    let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}', image =  ${userDto.image}
+                WHERE id = '${userDto.id}'`;
+
+    try {
+      await this.knex.raw(query);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async updatePerson(personDto: PersonDto) {
     personDto.image = null;
     personDto.role = 'PERSON';
 
-
     const updated = this.updateUser(personDto);
 
-
-    let query = `UPDATE Person 
-                SET name = '${personDto.name}', 
+    let query = `UPDATE Person SET name='${personDto.name}', 
                   surname = '${personDto.surname}' 
                 WHERE id = ${personDto.id}`;
 
-    try{
-      if(updated){
-        this.knex.raw(query);
+    try {
+      if (updated) {
+        await this.knex.raw(query);
+        return true;
+      } else {
+        console.log('No se ha actualizado user');
+        return false;
+      }
+    } catch (error) {
+      console.log('Error update person');
+      return false;
+    }
+  }
+
+  async updateMusicalGroup(musicalGroupDto: MusicalGroupDto) {
+    musicalGroupDto.image = null;
+    musicalGroupDto.role = 'MGROUP';
+
+    const updated = this.updateUser(musicalGroupDto);
+
+    let query = `UPDATE MGroup SET name = '${musicalGroupDto.name}',
+                  description = '${musicalGroupDto.description}', 
+                  members = ${musicalGroupDto.members}, 
+                  nameType = '${musicalGroupDto.nameType}' 
+                  WHERE id = ${musicalGroupDto.id}`;
+
+    try {
+      if (updated) {
+        console.log('Voy a hacer la query ' + query);
+        await this.knex.raw(query);
+        console.log('He hecho await a la query de mgroup');
         return true;
       } else {
         return false;
       }
-      }catch(error) {
+    } catch (error) {
+      console.log('Error update mgroup - revisar nameType');
+      //TODO: Si falla es porque no encuentra el nameType, hay que hacer un desplegable
       return false;
     }
-
   }
 
   /* Musical Groups */
@@ -97,25 +144,27 @@ export class DataBaseConnection {
     let query = `INSERT INTO MGroup(id, name, description,members,nameType)
     VALUES (${idUser} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
 
-    console.log(query);
-    //FIXME: devolver true/false y añadir realmente a la BBDD
-  }
-
-  setMusicalGroup(musicalgroupDto: MusicalGroupDto) {
-    let query = `INSERT INTO MGroup(id, name, description,members,nameType)
-    VALUES (${musicalgroupDto.id} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , '${musicalgroupDto.members}' , '${musicalgroupDto.nameType}')`;
+    await this.knex.raw(query);
     console.log(query);
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 
   async deleteMusicalGroup(musicalgroupId: number) {
     try {
+      if ((await this.getMusicalExchange(musicalgroupId)).length > 0) {
+        //Tiene más de un intercambio
+        console.log(
+          'No se puede eliminar porque tiene un intercambio pendiente',
+        );
+        //TODO: Tiene que saltar una excepción para mostrársela al usuario
+        return false;
+      }
       let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${musicalgroupId}`;
-      /*let query = `DELETE FROM MGroup WHERE id = ${musicalgroupId}`;*/
       const result = await this.knex.raw(query);
 
       return true;
     } catch (error) {
+      console.log('No se puede porque tiene intercambios');
       return false;
     }
     //FIXME: devolver true/false
@@ -151,24 +200,6 @@ export class DataBaseConnection {
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 
-  async updateUser(userDto: UserDto) {
-    let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}', image =  ${userDto.image}
-                WHERE id = '${userDto.id}'`;
-
-
-                try {
-                  await this.knex.raw(query);
-                  return true;
-               
-                }catch(error){
-                  return false;
-                
-                }
-  
-              }
-
-
-
   async getIdUserByEmail(email: string) {
     let query = `SELECT id FROM User WHERE email = '${email}'`;
 
@@ -177,6 +208,18 @@ export class DataBaseConnection {
     const idPerson = result[0].map(x => x.id);
 
     return idPerson;
+  }
+
+  async getMusicalExchange(musicalgroupId: number) {
+    try {
+      let query = `SELECT * FROM MusicalExchange 
+                   WHERE (idMGroupA=${musicalgroupId} OR idMGroupB=${musicalgroupId})
+                          AND date >= CURRENT_TIMESTAMP`;
+      const result = await this.knex.raw(query);
+      return result;
+    } catch (error) {
+      console.log('Error en consulta getMusicalExchange(id)');
+    }
   }
 }
 
