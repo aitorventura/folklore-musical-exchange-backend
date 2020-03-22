@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PersonDto } from './person.dto';
-import { DataBaseConnection } from '../app.database';
+import { PersonDataBaseConnection } from './person.database';
 
 @Injectable()
 export class PersonService {
-  constructor(private readonly dataBase: DataBaseConnection) {}
+  constructor(private readonly dataBase: PersonDataBaseConnection) { }
   async getPeople() {
     return await this.dataBase.getPeople();
   }

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './user.dto';
-import {DataBaseConnection} from '../app.database'
+import { UserDataBaseConnection } from './user.database'
 
 @Injectable()
 export class UserService {
 
-  constructor(private readonly dataBase: DataBaseConnection){
+  constructor(private readonly dataBase: UserDataBaseConnection) {
 
   }
   getUser(): string {
@@ -13,6 +13,6 @@ export class UserService {
   }
 
   createUser(userDto: UserDto) {
-     this.dataBase.addNewUser(userDto);
+    this.dataBase.addNewUser(userDto);
   }
 }

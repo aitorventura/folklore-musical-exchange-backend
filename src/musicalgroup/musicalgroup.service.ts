@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { MusicalGroupDto } from './musicalgroup.dto';
 import { DataBaseConnection } from '../app.database';
+import { MusicalGroupDataBaseConnection } from './musicalgroup.database';
 
 @Injectable()
 export class MusicalGroupService {
-  constructor(private readonly dataBase: DataBaseConnection) {}
+  constructor(private readonly dataBase: MusicalGroupDataBaseConnection) { }
 
   async getMusicalGroups() {
     return await this.dataBase.getGroups();
