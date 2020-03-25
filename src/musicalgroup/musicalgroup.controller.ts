@@ -33,6 +33,7 @@ export class MusicalGroupController {
 
   @Delete(':id') //TODO: acabar, se necesita pasarle id
   async deleteMusicalGroup(@Param('id') id: number) {
+    console.log('Backend: ' + id);
     return this.musicalgroupService.deleteMusicalGroup(id);
   }
 
