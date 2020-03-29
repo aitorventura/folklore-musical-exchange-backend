@@ -14,9 +14,8 @@ import { MusicalGroupService } from '../musicalgroup/musicalgroup.service';
 export class MusicalGroupController {
   constructor(private readonly musicalgroupService: MusicalGroupService) {}
 
-  @Get() //FIXME: no pilla los datos, algo está mal enrutado.. meh
+  @Get()
   async getMusicalGroups() {
-    //TODO: ver como recoge la lista de grupos y acabar
     return await this.musicalgroupService.getMusicalGroups();
   }
 
@@ -31,7 +30,7 @@ export class MusicalGroupController {
     return this.musicalgroupService.createMusicalGroup(musicalgroupDto);
   }
 
-  @Delete(':id') //TODO: acabar, se necesita pasarle id
+  @Delete(':id')
   async deleteMusicalGroup(@Param('id') id: number) {
     console.log('Backend: ' + id);
     return this.musicalgroupService.deleteMusicalGroup(id);
