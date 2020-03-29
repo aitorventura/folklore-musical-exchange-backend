@@ -8,7 +8,7 @@ export class MusicalExchangeService {
   constructor(private readonly dataBase: MusicalExchangeDataBaseConnection) {}
 
   async getMusicalExchanges() {
-    return await this.dataBase.getGroups();
+    return await this.dataBase.getMusicalExchanges();
   }
 
   async getMusicalExchange(id: number) {

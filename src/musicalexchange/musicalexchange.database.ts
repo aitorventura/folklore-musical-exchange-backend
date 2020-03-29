@@ -7,21 +7,29 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
     super();
   }
 
-  async getGroups() {
+  async getMusicalExchanges() {
     //HAgo JOIN de user y MGroup para ver la info
     //En un principio hago where para ver solo los intercambios pendientes, pero esto se haría con filtro
+    console.log('getMusicalExchanges BBDD TODOS');
+    try {
+      let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE date>= CURRENT_TIMESTAMP`;
+      const result = await this.knex.raw(query);
+      return result[0];
+      /*
     const result = await this.knex
       .select('*')
       .from('MusicalExchange')
-      .innerJoin('User', 'MusicalExchange.idMGroupA', 'User.id')
       .innerJoin('MGroup', 'MusicalExchange.idMGroupA', 'MGroup.id')
-      .innerJoin('User', 'MusicalExchange.idMGroupB', 'User.id')
-      .innerJoin('MGroup', 'MusicalExchange.idMGroupB', 'MGroup.id')
       .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
     return result;
+    */
+    } catch (error) {
+      console.log('Error al obtener los intercambios.');
+    }
   }
 
   async getMusicalExchange(id: number) {
+    /*
     const result = await this.knex
       .select('*')
       .from('MusicalExchange')
@@ -32,9 +40,35 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
       .where({ 'MusicalExchange.id': `${id}` });
     console.log(result);
     return result;
+    */
+
+    console.log('getMusicalExchanges(id) bbdd: ' + id);
+    try {
+      let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE MusicalExchange.id=${id}`;
+      const result = await this.knex.raw(query);
+      console.log('Resultado de id: ' + result[0]);
+      return result[0];
+    } catch (error) {
+      console.log('Error al obtener el intercambios con el id.');
+    }
   }
 
   async addNewMusicalExchange(musicalexchangeDto: MusicalExchangeDto) {
+    console.log('id: ' + musicalexchangeDto.id);
+    console.log('idMGroupA: ' + musicalexchangeDto.idMGroupA);
+    console.log('idMGroupB: ' + musicalexchangeDto.idMGroupB);
+    console.log('description: ' + musicalexchangeDto.description);
+    console.log('neededMoney: ' + musicalexchangeDto.neededMoney);
+    console.log('crowdfundingLink: ' + musicalexchangeDto.crowdfundingLink);
+    console.log('date: ' + musicalexchangeDto.date);
+
+    console.log('addNewMusicalExchange bbdd');
+    console.log(
+      'A: ' +
+        musicalexchangeDto.idMGroupA +
+        ' B: ' +
+        musicalexchangeDto.idMGroupB,
+    );
     if (musicalexchangeDto.idMGroupA == musicalexchangeDto.idMGroupB) {
       console.log(
         'Selecciona la otra agrupación con la que quieres hacer el intercambio',
@@ -79,6 +113,10 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
 
   async deleteMusicalExchange(musicalexchangeId: number) {
     try {
+      let query = `DELETE FROM MusicalExchange WHERE id=${musicalexchangeId}`;
+      const result = await this.knex.raw(query);
+      return true;
+      /*
       if ((await this.getMusicalExchange(musicalexchangeId)).length > 0) {
         console.log(
           'No se puede eliminar porque tiene un intercambio pendiente',
@@ -90,8 +128,9 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
       const result = await this.knex.raw(query);
 
       return true;
+      */
     } catch (error) {
-      console.log('No se puede porque tiene intercambios');
+      console.log('No se puede eliminar el intercambio');
       return false;
     }
   }

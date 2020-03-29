@@ -18,6 +18,7 @@ export class MusicalExchangeController {
 
   @Get()
   async getMusicalExchanges() {
+    console.log('getMusicalExchanges BE');
     return await this.musicalexchangeService.getMusicalExchanges();
   }
 
