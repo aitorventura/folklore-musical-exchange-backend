@@ -9,6 +9,7 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
 
   async getGroups() {
     //HAgo JOIN de user y MGroup para ver la info
+    //En un principio hago where para ver solo los intercambios pendientes, pero esto se haría con filtro
     const result = await this.knex
       .select('*')
       .from('MusicalExchange')

@@ -40,7 +40,7 @@ import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexch
     TypeService,
     TypeDataBaseConnection,
     MusicalExchangeService,
-    MusicalGroupDataBaseConnection,
+    MusicalExchangeDataBaseConnection,
   ],
 })
 export class AppModule {}
