@@ -11,6 +11,15 @@ export class MusicalExchangeDto {
   crowdfundingLink: string;
   date: Date; //No sé si el tipo es Date
 
+  async dame() {
+    console.log('id: ' + this.id);
+    console.log('idMGroupA: ' + this.idMGroupA);
+    console.log('idMGroupB: ' + this.idMGroupB);
+    console.log('description: ' + this.description);
+    console.log('neededMoney: ' + this.neededMoney);
+    console.log('crowdfundingLink: ' + this.crowdfundingLink);
+    console.log('date: ' + this.date);
+  }
   /*
     console.log("id: "+musicalexchange.id);
     console.log("idMGroupA: "+musicalexchange.idMGroupA);

@@ -1,7 +1,7 @@
 import { MusicalExchangeDto } from './musicalexchange.dto';
-import { UserDataBaseConnection } from 'src/user/user.database';
+import { DataBaseConnection } from 'src/app.database';
 
-export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
+export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   knex;
   constructor() {
     super();
@@ -12,36 +12,37 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
     //En un principio hago where para ver solo los intercambios pendientes, pero esto se haría con filtro
     console.log('getMusicalExchanges BBDD TODOS');
     try {
+      /*
       let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE date>= CURRENT_TIMESTAMP`;
       const result = await this.knex.raw(query);
+      console.log('Intercambios: ' + result);
       return result[0];
-      /*
-    const result = await this.knex
-      .select('*')
-      .from('MusicalExchange')
-      .innerJoin('MGroup', 'MusicalExchange.idMGroupA', 'MGroup.id')
-      .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
-    return result;
-    */
+      */
+      const result = await this.knex
+        .select('*')
+        .from(
+          'MusicalExchange',
+        ) /*
+        .innerJoin(
+          'MGroup AS MGroupA',
+          'MusicalExchange.idMGroupA',
+          'MGroupA.id',
+        )
+        .innerJoin(
+          'MGroup AS MGroupB',
+          'MusicalExchange.idMGroupA',
+          'MGroupB.id',
+        )*/
+        .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
+      console.log('Intercambios: ' + result);
+
+      return result;
     } catch (error) {
       console.log('Error al obtener los intercambios.');
     }
   }
 
   async getMusicalExchange(id: number) {
-    /*
-    const result = await this.knex
-      .select('*')
-      .from('MusicalExchange')
-      .innerJoin('User', 'MusicalExchange.idMGroupA', 'User.id')
-      .innerJoin('MGroup', 'MusicalExchange.idMGroupA', 'MGroup.id')
-      .innerJoin('User', 'MusicalExchange.idMGroupB', 'User.id')
-      .innerJoin('MGroup', 'MusicalExchange.idMGroupB', 'MGroup.id')
-      .where({ 'MusicalExchange.id': `${id}` });
-    console.log(result);
-    return result;
-    */
-
     console.log('getMusicalExchanges(id) bbdd: ' + id);
     try {
       let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE MusicalExchange.id=${id}`;
@@ -71,7 +72,7 @@ export class MusicalExchangeDataBaseConnection extends UserDataBaseConnection {
     );
     if (musicalexchangeDto.idMGroupA == musicalexchangeDto.idMGroupB) {
       console.log(
-        'Selecciona la otra agrupación con la que quieres hacer el intercambio',
+        'Selecciona la otra agrupación con la que quieres hacer el intercambio. No puedes realizar un intercambio contigo mismo',
       );
       //TODO: Debería salir una excepción
       return false;
