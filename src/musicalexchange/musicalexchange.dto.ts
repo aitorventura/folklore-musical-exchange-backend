@@ -10,6 +10,12 @@ export class MusicalExchangeDto {
   neededMoney: number;
   crowdfundingLink: string;
   date: Date; //No sé si el tipo es Date
+  visualDate = this.date.toLocaleString();
+
+  async getVisualDate() {
+    console.log('Fecha visual: ' + this.date.toLocaleString());
+    return this.date.toLocaleString();
+  }
 
   async dame() {
     console.log('id: ' + this.id);
@@ -20,6 +26,7 @@ export class MusicalExchangeDto {
     console.log('crowdfundingLink: ' + this.crowdfundingLink);
     console.log('date: ' + this.date);
   }
+
   /*
     console.log("id: "+musicalexchange.id);
     console.log("idMGroupA: "+musicalexchange.idMGroupA);

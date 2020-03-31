@@ -8,31 +8,11 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   }
 
   async getMusicalExchanges() {
-    //HAgo JOIN de user y MGroup para ver la info
-    //En un principio hago where para ver solo los intercambios pendientes, pero esto se haría con filtro
     console.log('getMusicalExchanges BBDD TODOS');
     try {
-      /*
-      let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE date>= CURRENT_TIMESTAMP`;
-      const result = await this.knex.raw(query);
-      console.log('Intercambios: ' + result);
-      return result[0];
-      */
       const result = await this.knex
         .select('*')
-        .from(
-          'MusicalExchange',
-        ) /*
-        .innerJoin(
-          'MGroup AS MGroupA',
-          'MusicalExchange.idMGroupA',
-          'MGroupA.id',
-        )
-        .innerJoin(
-          'MGroup AS MGroupB',
-          'MusicalExchange.idMGroupA',
-          'MGroupB.id',
-        )*/
+        .from('MusicalExchange')
         .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
       console.log('Intercambios: ' + result);
 
@@ -74,14 +54,23 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
       console.log(
         'Selecciona la otra agrupación con la que quieres hacer el intercambio. No puedes realizar un intercambio contigo mismo',
       );
-      //TODO: Debería salir una excepción
-      return false;
+    }
+    if (musicalexchangeDto.neededMoney == 0) {
+      console.log(
+        'Como el dinero necesario es 0, es decir, no lo han modificado, lo cambio y lo pongo a null',
+      );
+      musicalexchangeDto.neededMoney = null;
     }
 
     let query = `INSERT INTO MusicalExchange (idMGroupA, idMGroupB, date, place, description, repertoire, neededMoney, crowdfundingLink) 
     VALUES (${musicalexchangeDto.idMGroupA}, ${musicalexchangeDto.idMGroupB}, '${musicalexchangeDto.date}', '${musicalexchangeDto.place}', '${musicalexchangeDto.description}', '${musicalexchangeDto.repertoire}', ${musicalexchangeDto.neededMoney}, '${musicalexchangeDto.crowdfundingLink}')`;
-    await this.knex.raw(query);
-    console.log(query);
+
+    try {
+      await this.knex.raw(query);
+      console.log(query);
+    } catch (error) {
+      console.log('Error al intentar añadir un intercambio');
+    }
   }
 
   async updateMusicalExchange(musicalExchangeDto: MusicalExchangeDto) {
