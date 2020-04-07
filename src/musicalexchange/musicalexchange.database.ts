@@ -10,7 +10,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   async getMusicalExchanges() {
     console.log('getMusicalExchanges BBDD TODOS');
     try {
-
       let query = `SELECT m.id, m.idMGroupA, m.idMGroupB, m.date, m.place, m.description, m.repertoire, m.neededMoney, m.crowdfundingLink, mA.name as nombreMA, mB.name as nombreMB
                    FROM MusicalExchange as m
                    JOIN MGroup AS mA ON mA.id=m.idMGroupA 
@@ -32,7 +31,7 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   async getMusicalExchange(id: number) {
     console.log('getMusicalExchanges(id) bbdd: ' + id);
     try {
-      let query = `SELECT * FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE MusicalExchange.id=${id}`;
+      let query = `SELECT idMGroupA, idMGroupB, date, place, MusicalExchange.description, repertoire, neededMoney, crowdfundingLink FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE MusicalExchange.id=${id}`;
       const result = await this.knex.raw(query);
       console.log('Resultado de id: ' + result[0]);
       return result[0];
@@ -42,22 +41,18 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   }
 
   async addNewMusicalExchange(musicalexchangeDto: MusicalExchangeDto) {
-    console.log('id: ' + musicalexchangeDto.id);
+    /*console.log('id: ' + musicalexchangeDto.id);
     console.log('idMGroupA: ' + musicalexchangeDto.idMGroupA);
     console.log('idMGroupB: ' + musicalexchangeDto.idMGroupB);
     console.log('description: ' + musicalexchangeDto.description);
     console.log('neededMoney: ' + musicalexchangeDto.neededMoney);
-    console.log('crowdfundingLink: ' + musicalexchangeDto.crowdfundingLink);
+    console.log('crowdfundingLink: ' + musicalexchangeDto.crowdfundingLink);*/
     console.log('date: ' + musicalexchangeDto.date);
 
-    console.log('addNewMusicalExchange bbdd');
-    console.log(
-      'A: ' +
-        musicalexchangeDto.idMGroupA +
-        ' B: ' +
-        musicalexchangeDto.idMGroupB,
-    );
-    
+    //Pasamos la fecha recibida a tipo String
+    var fecha = musicalexchangeDto.date.toLocaleString();
+    console.log('fecha: ' + fecha);
+
     if (musicalexchangeDto.idMGroupA == musicalexchangeDto.idMGroupB) {
       console.log(
         'Selecciona la otra agrupación con la que quieres hacer el intercambio. No puedes realizar un intercambio contigo mismo',
@@ -71,12 +66,11 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
     }
 
     let query = `INSERT INTO MusicalExchange (idMGroupA, idMGroupB, date, place, description, repertoire, neededMoney, crowdfundingLink) 
-    VALUES (${musicalexchangeDto.idMGroupA}, ${musicalexchangeDto.idMGroupB}, '${musicalexchangeDto.date}', '${musicalexchangeDto.place}', '${musicalexchangeDto.description}', '${musicalexchangeDto.repertoire}', ${musicalexchangeDto.neededMoney}, '${musicalexchangeDto.crowdfundingLink}')`;
+    VALUES (${musicalexchangeDto.idMGroupA}, ${musicalexchangeDto.idMGroupB}, '${fecha}', '${musicalexchangeDto.place}', '${musicalexchangeDto.description}', '${musicalexchangeDto.repertoire}', ${musicalexchangeDto.neededMoney}, '${musicalexchangeDto.crowdfundingLink}')`;
 
     try {
       await this.knex.raw(query);
       return true;
-      console.log(query);
     } catch (error) {
       return false;
     }
@@ -101,11 +95,9 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
 
                 WHERE id = ${musicalExchangeDto.id}`;
     try {
-      console.log('Voy a hacer la query ' + query);
       await this.knex.raw(query);
       return true;
     } catch (error) {
-      console.log('Error update musical group');
       return false;
     }
   }
