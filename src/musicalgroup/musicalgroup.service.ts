@@ -16,14 +16,14 @@ export class MusicalGroupService {
   }
 
   createMusicalGroup(musicalgroupDto: MusicalGroupDto) {
-    this.dataBase.addNewMusicalGroup(musicalgroupDto);
+    return this.dataBase.addNewMusicalGroup(musicalgroupDto);
   }
 
   updateMusicalGroup(musicalgroupDto: MusicalGroupDto) {
-    this.dataBase.updateMusicalGroup(musicalgroupDto);
+    return this.dataBase.updateMusicalGroup(musicalgroupDto);
   }
 
   deleteMusicalGroup(musicalgroupId: number) {
-    this.dataBase.deleteMusicalGroup(musicalgroupId);
+    return this.dataBase.deleteMusicalGroup(musicalgroupId);
   }
 }

@@ -13,6 +13,6 @@ export class UserService {
   }
 
   createUser(userDto: UserDto) {
-    this.dataBase.addNewUser(userDto);
+    return this.dataBase.addNewUser(userDto);
   }
 }

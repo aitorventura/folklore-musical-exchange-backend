@@ -14,15 +14,14 @@ export class PersonService {
   }
 
   createPerson(personDto: PersonDto) {
-    this.dataBase.addNewPerson(personDto);
+    return this.dataBase.addNewPerson(personDto);
   }
 
   updatePerson(personDto: PersonDto) {
-    this.dataBase.updatePerson(personDto);
+    return this.dataBase.updatePerson(personDto);
   }
 
   deletePerson(id: number) {
-    console.log('Service ');
-    this.dataBase.deletePerson(id);
+    return this.dataBase.deletePerson(id);
   }
 }

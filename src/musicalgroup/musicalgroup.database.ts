@@ -30,14 +30,24 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     musicalgroupDto.image = null;
     musicalgroupDto.role = 'MGROUP';
 
-    await this.addNewUser(musicalgroupDto);
+    const isAdded = await this.addNewUser(musicalgroupDto);
+    if(!isAdded){
+      return false;
+    }
+
     let idUser = await this.getIdUserByEmail(musicalgroupDto.email);
 
     let query = `INSERT INTO MGroup(id, name, description,members,nameType)
     VALUES (${idUser} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , ${musicalgroupDto.members} , '${musicalgroupDto.nameType}')`;
 
-    await this.knex.raw(query);
-    console.log(query);
+    try{
+      await this.knex.raw(query);
+      console.log(query);
+      return true;
+    }catch(error){
+      return false;
+    }
+   
     //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 

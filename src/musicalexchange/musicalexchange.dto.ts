@@ -9,6 +9,8 @@ export class MusicalExchangeDto {
   repertoire: string;
   neededMoney: number;
   crowdfundingLink: string;
+  nombreMA:string;
+  nombreMB:string;
   date: Date; //No sé si el tipo es Date
   visualDate = this.date.toLocaleString();
 

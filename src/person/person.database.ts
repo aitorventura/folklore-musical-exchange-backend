@@ -30,14 +30,22 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
         personDto.image = null;
         personDto.role = 'PERSON';
 
-        await this.addNewUser(personDto);
+        const isAdded = await this.addNewUser(personDto);
+        if(!isAdded){
+            return false;
+        }
 
         let idUser = await this.getIdUserByEmail(personDto.email);
 
         let query = `INSERT INTO Person(id, name, surname)
     VALUES (${idUser} ,  '${personDto.name}' , '${personDto.surname}')`;
 
-        await this.knex.raw(query);
+        try {  
+            await this.knex.raw(query);
+               return true;    
+        } catch(error) {
+            return false;
+        }
     }
 
     async updatePerson(personDto: PersonDto) {

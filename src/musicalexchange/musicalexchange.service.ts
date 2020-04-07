@@ -16,14 +16,14 @@ export class MusicalExchangeService {
   }
 
   createMusicalExchange(musicalexchangeDto: MusicalExchangeDto) {
-    this.dataBase.addNewMusicalExchange(musicalexchangeDto);
+    return this.dataBase.addNewMusicalExchange(musicalexchangeDto);
   }
 
   updateMusicalExchange(musicalexchangeDto: MusicalExchangeDto) {
-    this.dataBase.updateMusicalExchange(musicalexchangeDto);
+    return this.dataBase.updateMusicalExchange(musicalexchangeDto);
   }
 
   deleteMusicalExchange(musicalexchangeId: number) {
-    this.dataBase.deleteMusicalExchange(musicalexchangeId);
+    return this.dataBase.deleteMusicalExchange(musicalexchangeId);
   }
 }

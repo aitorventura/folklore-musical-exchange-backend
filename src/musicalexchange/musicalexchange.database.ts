@@ -10,13 +10,20 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   async getMusicalExchanges() {
     console.log('getMusicalExchanges BBDD TODOS');
     try {
-      const result = await this.knex
+
+      let query = `SELECT m.id, m.idMGroupA, m.idMGroupB, m.date, m.place, m.description, m.repertoire, m.neededMoney, m.crowdfundingLink, mA.name as nombreMA, mB.name as nombreMB
+                   FROM MusicalExchange as m
+                   JOIN MGroup AS mA ON mA.id=m.idMGroupA 
+                   JOIN MGroup AS mB ON mB.id=m.idMGroupB`;
+      /*const result = await this.knex
         .select('*')
         .from('MusicalExchange')
+        .innerJoin(this.knex.raw("MGroup as g1 ON MGroup.id = MusicalExchange.idMGroupA"))
+        .innerJoin(this.knex.raw("MGroup as g2 ON MGroup.id = MusicalExchange.idMGroupB"))
         .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
-      console.log('Intercambios: ' + result);
-
-      return result;
+      console.log('Intercambios: ' + result);*/
+      const result = await this.knex.raw(query);
+      return result[0];
     } catch (error) {
       console.log('Error al obtener los intercambios.');
     }
@@ -50,6 +57,7 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
         ' B: ' +
         musicalexchangeDto.idMGroupB,
     );
+    
     if (musicalexchangeDto.idMGroupA == musicalexchangeDto.idMGroupB) {
       console.log(
         'Selecciona la otra agrupación con la que quieres hacer el intercambio. No puedes realizar un intercambio contigo mismo',
@@ -67,9 +75,10 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
 
     try {
       await this.knex.raw(query);
+      return true;
       console.log(query);
     } catch (error) {
-      console.log('Error al intentar añadir un intercambio');
+      return false;
     }
   }
 
