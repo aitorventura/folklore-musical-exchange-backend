@@ -17,6 +17,9 @@ import { TypeDataBaseConnection } from './type/type.database';
 import { MusicalExchangeController } from './musicalexchange/musicalexchange.controller';
 import { MusicalExchangeService } from './musicalexchange/musicalexchange.service';
 import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexchange.database';
+import { SubscriptionController } from './subscription/subscription.controller';
+import { SubscriptionService } from './subscription/subscription.service';
+import { SubscriptionDataBaseConnection } from './subscription/subscription.database';
 
 @Module({
   imports: [],
@@ -27,6 +30,7 @@ import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexch
     MusicalGroupController,
     TypeController,
     MusicalExchangeController,
+    SubscriptionController,
   ],
   providers: [
     AppService,
@@ -41,6 +45,8 @@ import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexch
     TypeDataBaseConnection,
     MusicalExchangeService,
     MusicalExchangeDataBaseConnection,
+    SubscriptionService,
+    SubscriptionDataBaseConnection,
   ],
 })
 export class AppModule {}
