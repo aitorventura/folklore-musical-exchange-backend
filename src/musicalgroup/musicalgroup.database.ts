@@ -27,12 +27,22 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
   }
 
   async addNewMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    /*
+    SALIDA 0: Todo funciona correctamente
+    SALIDA 1: Ya existe ese email
+    SALIDA 2: Ya existe ese username
+    SALIDA 3: Error al crear el usuario
+    SALIDA 4: Error al crear la agrupación
+    */
     musicalgroupDto.image = null;
     musicalgroupDto.role = 'MGROUP';
 
     const isAdded = await this.addNewUser(musicalgroupDto);
-    if(!isAdded){
-      return false;
+    console.log('Resultado isadded: ' + isAdded);
+    if (isAdded != 0) {
+      //Si ha habido un problema devuelvo el código
+      console.log('Return: ' + isAdded);
+      return isAdded;
     }
 
     let idUser = await this.getIdUserByEmail(musicalgroupDto.email);
@@ -40,41 +50,46 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     let query = `INSERT INTO MGroup(id, name, description,members,nameType)
     VALUES (${idUser} ,  '${musicalgroupDto.name}' , '${musicalgroupDto.description}' , ${musicalgroupDto.members} , '${musicalgroupDto.nameType}')`;
 
-    try{
+    try {
       await this.knex.raw(query);
-      console.log(query);
-      return true;
-    }catch(error){
-      return false;
+      return 0;
+    } catch (error) {
+      return 4;
     }
-   
-    //FIXME: devolver true/false y añadir realmente a la BBDD
   }
 
   async updateMusicalGroup(musicalGroupDto: MusicalGroupDto) {
+    /*
+    SALIDA 0: Todo funciona correctamente
+    SALIDA 1: Ya existe ese email
+    SALIDA 2: Ya existe ese username
+    SALIDA 3: Error al modificar el usuario
+    SALIDA 4: Error al modificar la agrupación
+    */
     musicalGroupDto.image = null;
     musicalGroupDto.role = 'MGROUP';
 
     const updated = await this.updateUser(musicalGroupDto);
+    console.log('Resultado: ' + updated);
+    if (updated != 0) {
+      console.log('Resultado: ' + updated);
+      //Si ha habido un problema devuelvo el código
+      return updated;
+    }
 
     let query = `UPDATE MGroup SET name = '${musicalGroupDto.name}',
                       description = '${musicalGroupDto.description}', 
                       members = ${musicalGroupDto.members}, 
                       nameType = '${musicalGroupDto.nameType}' 
                     WHERE id = ${musicalGroupDto.id}`;
-
     try {
-      if (updated) {
-        console.log('Voy a hacer la query ' + query);
+      if (updated === 0) {
         await this.knex.raw(query);
-        console.log('He hecho await a la query de mgroup');
-        return true;
-      } else {
-        return false;
+        return 0;
       }
     } catch (error) {
       console.log('Error update mgroup');
-      return false;
+      return 4;
     }
   }
 

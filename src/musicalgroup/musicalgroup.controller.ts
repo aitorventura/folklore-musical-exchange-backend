@@ -25,9 +25,11 @@ export class MusicalGroupController {
     return result[0];
   }
 
-  @Post('/create') //sí que va
+  @Post('/create')
   async createMusicalGroup(@Body() musicalgroupDto: MusicalGroupDto) {
-    return this.musicalgroupService.createMusicalGroup(musicalgroupDto);
+    let res = this.musicalgroupService.createMusicalGroup(musicalgroupDto);
+    console.log('Resultado: ' + res);
+    return res;
   }
 
   @Delete(':id')
