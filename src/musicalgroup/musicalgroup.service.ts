@@ -5,7 +5,7 @@ import { MusicalGroupDataBaseConnection } from './musicalgroup.database';
 
 @Injectable()
 export class MusicalGroupService {
-  constructor(private readonly dataBase: MusicalGroupDataBaseConnection) { }
+  constructor(private readonly dataBase: MusicalGroupDataBaseConnection) {}
 
   async getMusicalGroups() {
     return await this.dataBase.getGroups();
@@ -13,6 +13,10 @@ export class MusicalGroupService {
 
   async getMusicalGroup(id: number) {
     return await this.dataBase.getMusicalGroup(id);
+  }
+
+  async getOthersMusicalGroups(id: number) {
+    return await this.dataBase.getOthersMusicalGroups(id);
   }
 
   createMusicalGroup(musicalgroupDto: MusicalGroupDto) {

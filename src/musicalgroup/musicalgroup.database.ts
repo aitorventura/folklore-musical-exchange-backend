@@ -22,7 +22,15 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
       .from('MGroup')
       .innerJoin('User', 'MGroup.id', 'User.id')
       .where({ 'MGroup.id': `${id}` });
-    console.log(result);
+    return result;
+  }
+
+  async getOthersMusicalGroups(id: number) {
+    const result = await this.knex
+      .select('*')
+      .from('MGroup')
+      .innerJoin('User', 'MGroup.id', 'User.id')
+      .where(this.knex.raw(`MGroup.id != ${id}`));
     return result;
   }
 
@@ -70,9 +78,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     musicalGroupDto.role = 'MGROUP';
 
     const updated = await this.updateUser(musicalGroupDto);
-    console.log('Resultado: ' + updated);
     if (updated != 0) {
-      console.log('Resultado: ' + updated);
       //Si ha habido un problema devuelvo el código
       return updated;
     }
