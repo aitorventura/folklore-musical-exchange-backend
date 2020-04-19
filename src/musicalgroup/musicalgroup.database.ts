@@ -35,11 +35,12 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     SALIDA 4: Error al crear la agrupación
     */
     //musicalgroupDto.image = null;
+    console.log("musicalgroupDto.image: ", musicalgroupDto.image);
     musicalgroupDto.role = 'MGROUP';
     console.log("Nombre imagen: ", musicalgroupDto.image.name);
 
     const isAdded = await this.addNewUser(musicalgroupDto);
-    console.log('Resultado isadded: ' + isAdded);
+    //console.log('Resultado isadded: ' + isAdded);
     if (isAdded != 0) {
       //Si ha habido un problema devuelvo el código
       //console.log('Return: ' + isAdded);
