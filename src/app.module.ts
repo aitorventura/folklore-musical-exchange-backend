@@ -20,6 +20,22 @@ import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexch
 import { SubscriptionController } from './subscription/subscription.controller';
 import { SubscriptionService } from './subscription/subscription.service';
 import { SubscriptionDataBaseConnection } from './subscription/subscription.database';
+import { LoginController } from './login/login.controller';
+import { LoginDataBaseConnection } from './login/login.database';
+import { LoginService } from './login/login.service';
+import { JwtService } from './shared/services/jwt.service';
+import * as jwt from 'jsonwebtoken';
+
+import { config } from 'dotenv';
+
+config();
+const jwtServiceProvider = {
+  provide: JwtService,
+  useFactory: () => {
+    return new JwtService(jwt, "fme");
+  },
+};
+
 
 @Module({
   imports: [],
@@ -31,8 +47,10 @@ import { SubscriptionDataBaseConnection } from './subscription/subscription.data
     TypeController,
     MusicalExchangeController,
     SubscriptionController,
+    LoginController
   ],
   providers: [
+    jwtServiceProvider,
     AppService,
     DataBaseConnection,
     UserService,
@@ -47,6 +65,8 @@ import { SubscriptionDataBaseConnection } from './subscription/subscription.data
     MusicalExchangeDataBaseConnection,
     SubscriptionService,
     SubscriptionDataBaseConnection,
+    LoginDataBaseConnection,
+    LoginService,
   ],
 })
 export class AppModule {}
