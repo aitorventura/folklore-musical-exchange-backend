@@ -34,14 +34,15 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     SALIDA 3: Error al crear el usuario
     SALIDA 4: Error al crear la agrupación
     */
-    musicalgroupDto.image = null;
+    //musicalgroupDto.image = null;
     musicalgroupDto.role = 'MGROUP';
+    console.log("Nombre imagen: ", musicalgroupDto.image.name);
 
     const isAdded = await this.addNewUser(musicalgroupDto);
     console.log('Resultado isadded: ' + isAdded);
     if (isAdded != 0) {
       //Si ha habido un problema devuelvo el código
-      console.log('Return: ' + isAdded);
+      //console.log('Return: ' + isAdded);
       return isAdded;
     }
 
@@ -66,13 +67,13 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     SALIDA 3: Error al modificar el usuario
     SALIDA 4: Error al modificar la agrupación
     */
-    musicalGroupDto.image = null;
-    musicalGroupDto.role = 'MGROUP';
 
+    musicalGroupDto.role = 'MGROUP';
+    console.warn("Nombre imagen: ", musicalGroupDto.image.name);
     const updated = await this.updateUser(musicalGroupDto);
-    console.log('Resultado: ' + updated);
+    //console.log('Resultado: ' + updated);
     if (updated != 0) {
-      console.log('Resultado: ' + updated);
+      //  console.log('Resultado: ' + updated);
       //Si ha habido un problema devuelvo el código
       return updated;
     }
@@ -88,7 +89,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
         return 0;
       }
     } catch (error) {
-      console.log('Error update mgroup');
+      //  console.log('Error update mgroup');
       return 4;
     }
   }
@@ -96,9 +97,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
   async deleteMusicalGroup(musicalgroupId: number) {
     try {
       if ((await this.getMusicalExchange(musicalgroupId)).length > 0) {
-        console.log(
-          'No se puede eliminar porque tiene un intercambio pendiente',
-        );
+        console.log('No se puede eliminar porque tiene un intercambio pendiente');
         //TODO: Tiene que saltar una excepción para mostrársela al usuario
         return false;
       }
@@ -107,7 +106,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
       return true;
     } catch (error) {
-      console.log('No se puede porque tiene intercambios');
+      //  console.log('No se puede porque tiene intercambios');
       return false;
     }
   }

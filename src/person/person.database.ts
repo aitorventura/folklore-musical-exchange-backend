@@ -34,7 +34,7 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
     SALIDA 3: Error al añadir el usuario
     SALIDA 4: Error al añadir la persona
     */
-    personDto.image = null;
+    //personDto.image = null;
     personDto.role = 'PERSON';
 
     const isAdded = await this.addNewUser(personDto);

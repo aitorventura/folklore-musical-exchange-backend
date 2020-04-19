@@ -5,6 +5,6 @@ export class UserDto {
   username: string;
   password: string;
   city: string;
-  image?: string;
+  image?: File;
   date: Date;
 }
