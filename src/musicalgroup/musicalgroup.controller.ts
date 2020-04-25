@@ -19,6 +19,11 @@ export class MusicalGroupController {
     return await this.musicalgroupService.getMusicalGroups();
   }
 
+  @Get('/others/:id')
+  async getOtherMusicalGroups(@Param('id') id: number) {
+    return await this.musicalgroupService.getOthersMusicalGroups(id);
+  }
+
   @Get(':id')
   async getMusicalGroup(@Param('id') id: number) {
     const result = await this.musicalgroupService.getMusicalGroup(id);
