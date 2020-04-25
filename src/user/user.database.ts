@@ -8,44 +8,66 @@ export class UserDataBaseConnection extends DataBaseConnection {
   }
 
   async addNewUser(userDto: UserDto) {
+    console.log("user.database.addNewUser, comprobar si existe el email")
     try {
-      let query = `SELECT * FROM User WHERE email='${userDto.email}'`;
-      console.log('query: ' + query);
-      const result = await this.knex.raw(query);
-      console.log('result[0]: ' + result[0].length);
-      console.log('result: ' + result.length);
-      if (result[0].length > 0) {
-        console.log('addUser res: return 1');
+      const result = await this.knex.select()
+        .from("User")
+        .where({ 'email': `${userDto.email}` });
+      //let query = `SELECT * FROM User WHERE email='${userDto.email}'`;
+      //console.log('Query: ' + query);
+      //const result = await this.knex.raw(query);
+
+      //console.log('result[0]: ' + result[0].length);
+      console.log('Total resultados con email ' + userDto.email + ': ' + result.length);
+      if (result.length > 0) {
+        //if (result[0] != null && result[0].length > 0) {
+        //  console.log('addUser res: return 1');
         return 1;
       }
     } catch (error) {
-      console.log('Error con el select email');
+      //console.log('Error con el select email');
       return 3;
     }
 
+    console.log("user.database.addNewUser, comprobar si existe el username")
     try {
-      let query = `SELECT * FROM User WHERE username='${userDto.username}'`;
-      console.log('query: ' + query);
-      const result = await this.knex.raw(query);
-      console.log('result[0]: ' + result[0].length);
-      console.log('result: ' + result.length);
-      if (result[0].length > 0) {
-        console.log('addUser res: return 2');
+      const result = await this.knex.select()
+        .from("User")
+        .where({ "username": `${userDto.username}` });
+      //let query = `SELECT * FROM User WHERE username='${userDto.username}'`;
+      //console.log('query: ' + query);
+      //const result = await this.knex.raw(query);
+      //console.log('result[0]: ' + result[0].length);
+      //console.log('result: ' + result.length);
+      console.log('Total resultados con username ' + userDto.username + ': ' + result.length);
+      if (result.length > 0) {
+        //if (result[0].length > 0) {
+        //  console.log('addUser res: return 2');
         return 2;
       }
     } catch (error) {
-      console.log('Error al ver si ya existe ese usuario');
+      //console.log('Error al ver si ya existe ese usuario');
       return 3;
     }
-
+    console.log("user.database.addNewUser, inserto en la tabla user")
     try {
-      let query = `INSERT INTO User(role, email, username, password, city, image)
-                VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', ${userDto.image})`;
-      console.log('query: ' + query);
-      const result = await this.knex.raw(query);
+      /*await this.knex("User").insert({
+        "username": userDto.username,
+        "email": userDto.email,
+        "password": AES_ENCRYPT(userDto.password, "fme"),
+        "role": userDto.role,
+        "city": userDto.city,
+        "image": userDto.image
+      }).then(() => {})*/
+      //const image = userDto.image.split(",");
+      //userDto.image = image[1];
+      let query = `INSERT INTO User(role, email, username, password, city, image) VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', '${userDto.image}')`;
+      console.log('user.database.addNewUser, Query: ' + query);
+      await this.knex.raw(query);
       return 0;
     } catch (error) {
-      console.log('Error al crear el usuario');
+      console.log(error);
+      //console.log('Error al crear el usuario');
       return 3;
     }
   }
