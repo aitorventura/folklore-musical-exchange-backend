@@ -6,22 +6,39 @@ import {
   Put,
   Delete,
   Param,
+  UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PersonDto } from '../person/person.dto';
 import { PersonService } from '../person/person.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthUser } from '../shared/decorators/requester.decorator';
+import { Requester } from '../shared/entities/requester';
+import { RequesterRole } from '../shared/enums/requester-role.enum';
 
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {}
 
   @Get()
-  async getPeople() {
+  @UseGuards(AuthGuard)
+  async getPeople(@AuthUser() requester: Requester) {
+    if(requester.role !== "PERSON"){
+      throw new ForbiddenException();
+    }
     return await this.personService.getPeople();
   }
 
   @Get(':id')
-  async getPerson(@Param('id') id: number) {
-    const result = await this.personService.getPerson(id);
+  @UseGuards(AuthGuard)
+  async getPerson(@AuthUser() requester: Requester, @Param('id') id: string) {
+
+    if(requester.role !== RequesterRole.PERSON || parseInt(id) !== requester.id){
+      console.log("Recurso")
+
+      throw new ForbiddenException();
+    }
+    const result = await this.personService.getPerson(parseInt(id));
     return result[0];
   }
 
@@ -31,15 +48,23 @@ export class PersonController {
   }
 
   @Put(':id')
-  async updatePerson(@Param('id') id: number, @Body() personDto: PersonDto) {
-    console.log('Hago update desde el frontend');
-    personDto.id = id;
+  @UseGuards(AuthGuard)
+  async updatePerson(@AuthUser() requester: Requester, @Param('id') id: string, @Body() personDto: PersonDto) {
+   
+    
+    if(requester.role !== RequesterRole.PERSON || parseInt(id) !== requester.id){
+      throw new ForbiddenException();
+    }
+    personDto.id =  parseInt(id);
     return this.personService.updatePerson(personDto);
   }
 
   @Delete(':id')
-  async deletePerson(@Param('id') id: number) {
-    console.log('Backend: ' + id);
-    return this.personService.deletePerson(id);
+  @UseGuards(AuthGuard)
+  async deletePerson(@AuthUser() requester: Requester, @Param('id') id: string) {
+    if(requester.role !== RequesterRole.PERSON || parseInt(id) !== requester.id){
+      throw new ForbiddenException();
+    }
+    return this.personService.deletePerson(parseInt(id));
   }
 }
