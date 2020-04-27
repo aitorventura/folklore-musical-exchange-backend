@@ -9,10 +9,14 @@ import {
 } from '@nestjs/common';
 import { PersonDto } from '../person/person.dto';
 import { PersonService } from '../person/person.service';
+import { SubscriptionService } from 'src/subscription/subscription.service';
 
 @Controller('person')
 export class PersonController {
-  constructor(private readonly personService: PersonService) {}
+  constructor(
+    private readonly personService: PersonService,
+    private readonly subscriptionService: SubscriptionService,
+  ) {}
 
   @Get()
   async getPeople() {
@@ -31,9 +35,16 @@ export class PersonController {
   }
 
   @Put(':id')
-  async updatePerson(@Param('id') id: number, @Body() personDto: PersonDto) {
-    console.log('Hago update desde el frontend');
+  async updatePerson(
+    @Param('id') id: number,
+    @Body() personAndSubscriptions: any,
+  ) {
+    let personDto: PersonDto = personAndSubscriptions.person;
+    let subscriptions: string[] = personAndSubscriptions.subscriptions.subs; //Array.prototype.slice.call(personAndSubscriptions.subscriptions,);
+
     personDto.id = id;
+
+    this.subscriptionService.updateSubscriptions(personDto.id, subscriptions);
     return this.personService.updatePerson(personDto);
   }
 

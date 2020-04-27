@@ -18,17 +18,39 @@ export class SubscriptionDataBaseConnection extends UserDataBaseConnection {
   async addNewSubscription(subscriptionDto: SubscriptionDto) {
     let query = `INSERT INTO TypeSubscription(idPerson, nameType)
     VALUES (${subscriptionDto.idPerson} ,  '${subscriptionDto.nameType}')`;
+    try {
+      await this.knex.raw(query);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 
-    /*try {  Por ahora no devolveré nada
-            await this.knex.raw(query);
-               return true;    
-        } catch(error) {
-            return false;
-        }*/
+  async updateSubscriptions(id: number, subscriptions: string[]) {
+    this.deleteSubscriptions(id);
+
+    for (let sub of subscriptions) {
+      let subscriptionDto: SubscriptionDto = {
+        idPerson: id,
+        nameType: sub,
+      };
+      await this.addNewSubscription(subscriptionDto);
+    }
   }
 
   async deleteSubscription(idPerson: number, nameType: string) {
-    let query = `DELETE FROM MusicalExchange WHERE idPerson=${idPerson} and nameType=${nameType}`;
+    let query = `DELETE FROM TypeSubscription WHERE idPerson=${idPerson} AND nameType=${nameType}`;
     const result = await this.knex.raw(query);
+  }
+
+  async deleteSubscriptions(idPerson: number) {
+    let query = `DELETE FROM TypeSubscription WHERE idPerson=${idPerson}`;
+
+    try {
+      await this.knex.raw(query);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  //Put,
+  Put,
   Delete,
   Param,
 } from '@nestjs/common';
@@ -16,8 +16,7 @@ export class SubscriptionController {
 
   @Get(':id')
   async getSubscriptions(@Param('id') id: number) {
-    const result = await this.subscriptionService.getSubscriptions(id);
-    return result[0];
+    return await this.subscriptionService.getSubscriptions(id);
   }
 
   @Post('/create')
@@ -26,12 +25,18 @@ export class SubscriptionController {
   }
 
   // Por ahora no será necesario, la persona o se subscribe o no
-  /*@Put(':id')
-  async updateSubscription(@Param('id') id: number, @Body() subscriptionDto: SubscriptionDto) {
-    console.log('Hago update desde el frontend');
-    subscriptionDto.id = id;
-    return this.subscriptionService.updateSubscription(subscriptionDto);
-  }*/
+  @Put(':id')
+  async updateSubscription(
+    @Param('id') id: number,
+    @Body() subscriptions: string[],
+  ) {
+    console.log('paso por el controlador de suscripiones');
+    for (let sub of subscriptions) {
+      console.log(sub);
+    }
+
+    //return this.subscriptionService.updateSubscriptions(subscriptions);
+  }
 
   @Delete(':id/:nameType')
   async deleteSubscription(
