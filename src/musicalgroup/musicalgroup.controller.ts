@@ -6,9 +6,16 @@ import {
   Delete,
   Put,
   Param,
+  UseGuards,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MusicalGroupDto } from '../musicalgroup/musicalgroup.dto';
 import { MusicalGroupService } from '../musicalgroup/musicalgroup.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthUser } from '../shared/decorators/requester.decorator';
+import { Requester } from '../shared/entities/requester';
+import { RequesterRole } from '../shared/enums/requester-role.enum';
 
 @Controller('musicalgroup')
 export class MusicalGroupController {
@@ -33,22 +40,33 @@ export class MusicalGroupController {
   @Post('/create')
   async createMusicalGroup(@Body() musicalgroupDto: MusicalGroupDto) {
     let res = this.musicalgroupService.createMusicalGroup(musicalgroupDto);
-    console.log('Resultado: ' + res);
     return res;
   }
 
   @Delete(':id')
-  async deleteMusicalGroup(@Param('id') id: number) {
-    console.log('Backend: ' + id);
-    return this.musicalgroupService.deleteMusicalGroup(id);
+  @UseGuards(AuthGuard)
+  async deleteMusicalGroup(@AuthUser() requester: Requester, @Param('id') id: string) {
+    console.log("GO")
+    if(requester.role !== RequesterRole.MGROUP || requester.id !== parseInt(id)){
+      console.log("error")
+
+      throw new ForbiddenException();
+    }
+    console.log(this.musicalgroupService.deleteMusicalGroup(parseInt(id)))
+    return this.musicalgroupService.deleteMusicalGroup(parseInt(id));
   }
 
   @Put(':id')
-  async updateMusicalGroup(
-    @Param('id') id: number,
+  @UseGuards(AuthGuard)
+  async updateMusicalGroup(@AuthUser() requester: Requester,
+    @Param('id') id: string,
     @Body() musicalGroupDto: MusicalGroupDto,
   ) {
-    musicalGroupDto.id = id;
+
+    if(requester.role !== RequesterRole.MGROUP || requester.id !== parseInt(id)){
+      throw new ForbiddenException();
+    }
+    musicalGroupDto.id = parseInt(id);
     return this.musicalgroupService.updateMusicalGroup(musicalGroupDto);
   }
 }
