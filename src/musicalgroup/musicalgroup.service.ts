@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { MusicalGroupDto } from './musicalgroup.dto';
 import { DataBaseConnection } from '../app.database';
 import { MusicalGroupDataBaseConnection } from './musicalgroup.database';
+import { Cloudinary } from "../cloudinary/cloudinary"
 
 @Injectable()
 export class MusicalGroupService {
-  constructor(private readonly dataBase: MusicalGroupDataBaseConnection) {}
+  constructor(private readonly dataBase: MusicalGroupDataBaseConnection) { }
 
   async getMusicalGroups() {
     return await this.dataBase.getGroups();
@@ -19,7 +20,13 @@ export class MusicalGroupService {
     return await this.dataBase.getOthersMusicalGroups(id);
   }
 
-  createMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+  async createMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    var cloudinary = new Cloudinary()
+
+    // Subir imagen
+    var url = await cloudinary.uploadImage(musicalgroupDto.image, musicalgroupDto.username + "/profileImage/")
+
+    musicalgroupDto.image = url
     return this.dataBase.addNewMusicalGroup(musicalgroupDto);
   }
 

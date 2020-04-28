@@ -62,7 +62,7 @@ export class UserDataBaseConnection extends DataBaseConnection {
       //const image = userDto.image.split(",");
       //userDto.image = image[1];
       let query = `INSERT INTO User(role, email, username, password, city, image) VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', '${userDto.image}')`;
-      console.log('user.database.addNewUser, Query: ' + query);
+      //console.log('user.database.addNewUser, Query: ' + query);
       await this.knex.raw(query);
       return 0;
     } catch (error) {

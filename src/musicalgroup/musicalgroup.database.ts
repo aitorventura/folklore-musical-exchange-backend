@@ -35,7 +35,6 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
   }
 
 
-
   async addNewMusicalGroup(musicalgroupDto: MusicalGroupDto) {
     /*
     SALIDA 0: Todo funciona correctamente
@@ -80,7 +79,9 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
     musicalGroupDto.role = 'MGROUP';
     const updated = await this.updateUser(musicalGroupDto);
+    //console.log('Resultado: ' + updated);
     if (updated != 0) {
+      //  console.log('Resultado: ' + updated);
       //Si ha habido un problema devuelvo el código
       return updated;
     }
