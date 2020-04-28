@@ -6,9 +6,16 @@ import {
   Delete,
   Put,
   Param,
+  UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MusicalExchangeDto } from '../musicalexchange/musicalexchange.dto';
 import { MusicalExchangeService } from '../musicalexchange/musicalexchange.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { Requester } from '../shared/entities/requester';
+import { AuthUser } from '../shared/decorators/requester.decorator';
+import { MusicalExchangeDataBaseConnection } from './musicalexchange.database';
+import { RequesterRole } from '../shared/enums/requester-role.enum';
 
 @Controller('musicalexchange')
 export class MusicalExchangeController {
@@ -28,23 +35,58 @@ export class MusicalExchangeController {
   }
 
   @Post('/create')
-  async createMusicalExchange(@Body() musicalexchangeDto: MusicalExchangeDto) {
+  @UseGuards(AuthGuard)
+  async createMusicalExchange(@AuthUser() requester: Requester, @Body() musicalexchangeDto: MusicalExchangeDto) {
+    if(requester.role !== RequesterRole.MGROUP){
+      throw new ForbiddenException();
+    }
     return this.musicalexchangeService.createMusicalExchange(
       musicalexchangeDto,
     );
   }
 
   @Delete(':id')
-  async deleteMusicalExchange(@Param('id') id: number) {
-    return this.musicalexchangeService.deleteMusicalExchange(id);
+  @UseGuards(AuthGuard)
+  async deleteMusicalExchange(@AuthUser() requester: Requester, @Param('id') id: string) {
+    if(requester.role !== RequesterRole.MGROUP){
+      throw new ForbiddenException();
+    }
+
+    const listExchanges = await new MusicalExchangeDataBaseConnection().getMusicalExchangeMGroup(requester.id);
+      const array =  []
+      listExchanges.forEach(element => {
+          array.push(element.id)
+      })
+
+      if(!array.includes(parseInt(id))){
+        throw new ForbiddenException();
+      }
+
+
+    return this.musicalexchangeService.deleteMusicalExchange(parseInt(id));
   }
 
   @Put(':id')
-  async updateMusicalExchange(
-    @Param('id') id: number,
+  @UseGuards(AuthGuard)
+  async updateMusicalExchange(@AuthUser() requester: Requester,
+    @Param('id') id: string,
     @Body() musicalExchangeDto: MusicalExchangeDto,
   ) {
-    musicalExchangeDto.id = id;
+    if(requester.role !== "MGROUP"){
+      throw new ForbiddenException();
+    }
+
+    const listExchanges = await new MusicalExchangeDataBaseConnection().getMusicalExchangeMGroup(requester.id);
+      const array =  []
+      listExchanges.forEach(element => {
+          array.push(element.id)
+      })
+
+      if(!array.includes(parseInt(id))){
+        throw new ForbiddenException();
+      }
+
+    musicalExchangeDto.id = parseInt(id);
     return this.musicalexchangeService.updateMusicalExchange(
       musicalExchangeDto,
     );

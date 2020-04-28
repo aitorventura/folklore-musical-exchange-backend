@@ -26,7 +26,7 @@ export class LoginDataBaseConnection extends DataBaseConnection {
        
       const user = plainToClass(UserDto, result[0][0]);
       const key = this.jwtService.encode({
-          username: user.username,
+          id: user.id,
           role: user.role,
       });
 
