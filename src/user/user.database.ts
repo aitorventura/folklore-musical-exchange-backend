@@ -13,19 +13,14 @@ export class UserDataBaseConnection extends DataBaseConnection {
       const result = await this.knex.select()
         .from("User")
         .where({ 'email': `${userDto.email}` });
-      //let query = `SELECT * FROM User WHERE email='${userDto.email}'`;
-      //console.log('Query: ' + query);
-      //const result = await this.knex.raw(query);
 
-      //console.log('result[0]: ' + result[0].length);
       console.log('Total resultados con email ' + userDto.email + ': ' + result.length);
       if (result.length > 0) {
-        //if (result[0] != null && result[0].length > 0) {
-        //  console.log('addUser res: return 1');
+
         return 1;
       }
     } catch (error) {
-      //console.log('Error con el select email');
+
       return 3;
     }
 
@@ -34,40 +29,44 @@ export class UserDataBaseConnection extends DataBaseConnection {
       const result = await this.knex.select()
         .from("User")
         .where({ "username": `${userDto.username}` });
-      //let query = `SELECT * FROM User WHERE username='${userDto.username}'`;
-      //console.log('query: ' + query);
-      //const result = await this.knex.raw(query);
-      //console.log('result[0]: ' + result[0].length);
-      //console.log('result: ' + result.length);
+
       console.log('Total resultados con username ' + userDto.username + ': ' + result.length);
       if (result.length > 0) {
-        //if (result[0].length > 0) {
-        //  console.log('addUser res: return 2');
+    
         return 2;
       }
     } catch (error) {
-      //console.log('Error al ver si ya existe ese usuario');
       return 3;
     }
     console.log("user.database.addNewUser, inserto en la tabla user")
     try {
-      /*await this.knex("User").insert({
-        "username": userDto.username,
-        "email": userDto.email,
-        "password": AES_ENCRYPT(userDto.password, "fme"),
-        "role": userDto.role,
-        "city": userDto.city,
-        "image": userDto.image
-      }).then(() => {})*/
-      //const image = userDto.image.split(",");
-      //userDto.image = image[1];
+     
+      if(!userDto.image){
+        var randomNumber : number = this.randomInt(0, 4);
+        switch(randomNumber){
+          case 0:
+            userDto.image = "http://res.cloudinary.com/dc82hcjha/image/upload/v1588351463/logoAzul/profileImage/dkuwccnisehjloeiqahb.png"
+            break;
+          case 1:
+            userDto.image = "http://res.cloudinary.com/dc82hcjha/image/upload/v1588351496/logoAmarillo/profileImage/yyi5ecedmobxk79re9bv.png"
+            break;
+          case 2:
+            userDto.image = "http://res.cloudinary.com/dc82hcjha/image/upload/v1588351756/huevoMorado/profileImage/ztjw7vmikau0cv8r4giy.png"
+            break;
+          case 3:
+            userDto.image = "http://res.cloudinary.com/dc82hcjha/image/upload/v1588351819/huevoRojo/profileImage/dpoyhcoksxs0ycajr2us.png"
+            break;
+          case 4:
+            userDto.image = "http://res.cloudinary.com/dc82hcjha/image/upload/v1588351846/huevoVerde/profileImage/lqh3o0ltfxzmtj5tozbb.png"
+            break;
+
+          }
+      }
       let query = `INSERT INTO User(role, email, username, password, city, image) VALUES ( '${userDto.role}' ,  '${userDto.email}' , '${userDto.username}', AES_ENCRYPT('${userDto.password}', 'fme') , '${userDto.city}', '${userDto.image}')`;
-      //console.log('user.database.addNewUser, Query: ' + query);
       await this.knex.raw(query);
       return 0;
     } catch (error) {
       console.log(error);
-      //console.log('Error al crear el usuario');
       return 3;
     }
   }
@@ -80,6 +79,7 @@ export class UserDataBaseConnection extends DataBaseConnection {
         return 1;
       }
     } catch (error) {
+      console.log(error)
       console.log('Error al ver si ya existe ese email');
       return 3;
     }
@@ -91,19 +91,38 @@ export class UserDataBaseConnection extends DataBaseConnection {
         return 2;
       }
     } catch (error) {
+      console.log(error)
       console.log('Error al ver si ya existe ese usuario');
       return 3;
     }
 
-    let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}', image =  ${userDto.image}
-                WHERE id = '${userDto.id}'`;
-    try {
-      await this.knex.raw(query);
-      return 0;
-    } catch (error) {
-      console.log('Error al actualizar el usuario');
-      return 3;
+    console.log(userDto.image)
+    if(userDto.image){
+      let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}', image =  '${userDto.image}'
+                      WHERE id = '${userDto.id}'`;
+          try {
+            await this.knex.raw(query);
+            return 0;
+          } catch (error) {
+            console.log('Error al actualizar el usuario');
+            console.log(error)
+            return 3;
+          }
+    } else {
+        let query = `UPDATE User SET email = '${userDto.email}' , username = '${userDto.username}', city = '${userDto.city}' 
+                              WHERE id = '${userDto.id}'`;
+                  try {
+                    await this.knex.raw(query);
+                    return 0;
+                  } catch (error) {
+                    console.log('Error al actualizar el usuario');
+                    console.log(error)
+                    return 3;
+                  }
+
+
     }
+   
   }
 
   async deletePerson(id: number) {
@@ -126,5 +145,9 @@ export class UserDataBaseConnection extends DataBaseConnection {
     const idPerson = result[0].map(x => x.id);
 
     return idPerson;
+  }
+
+  randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

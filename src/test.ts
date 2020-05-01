@@ -13,5 +13,6 @@ cloudinary.config({
   //método que sube la imagen
 cloudinary.v2.uploader.upload("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==", 
   function(error, result) {
-      console.log(result.url) //guardar este link en la base de datos
+      const val = result.url
+      console.log(val)
    });

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PersonDto } from './person.dto';
 import { PersonDataBaseConnection } from './person.database';
+import { Cloudinary } from '../cloudinary/cloudinary';
 
 @Injectable()
 export class PersonService {
@@ -13,11 +14,26 @@ export class PersonService {
     return await this.dataBase.getPerson(id);
   }
 
-  createPerson(personDto: PersonDto) {
+  async createPerson(personDto: PersonDto) {
+    var cloudinary = new Cloudinary()
+    if(personDto.image){
+      var url = await cloudinary.uploadImage(personDto.image, personDto.username + "/profileImage/")
+      personDto.image = url
+     }
+
     return this.dataBase.addNewPerson(personDto);
   }
 
-  updatePerson(personDto: PersonDto) {
+  async updatePerson(personDto: PersonDto) {
+  
+    var cloudinary = new Cloudinary()
+    
+      var url = await cloudinary.uploadImage(personDto.image, personDto.username + "/profileImage/")
+      
+      if(url) {
+        personDto.image = url
+      }
+     
     return this.dataBase.updatePerson(personDto);
   }
 

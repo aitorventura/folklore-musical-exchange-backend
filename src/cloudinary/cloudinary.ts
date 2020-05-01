@@ -1,6 +1,4 @@
-import { ConfigOptions, v2 } from '../../node_modules/cloudinary/types';
-import axios, { AxiosRequestConfig } from "axios";
-import { url } from 'inspector';
+
 const cloudinary = require('cloudinary')
 
 export class Cloudinary {
@@ -14,15 +12,25 @@ export class Cloudinary {
 
     }
 
-    async uploadImage(musicalgroupDto, folder): Promise<string> {
+    async uploadImage(musicalgroupDto, folder): Promise<string | null> {
         this.putConfigOptions();
         var url = null;
-        await cloudinary.v2.uploader.upload(musicalgroupDto, { folder: folder },
-            function (error, result) {
-                console.log(error);
-                console.log(result.url);
-                url = result.url;
-            });
+        try{
+            await cloudinary.v2.uploader.upload(musicalgroupDto, { folder: folder,
+            transformation: [
+                {width: 400, height: 400, crop: "thumb"},
+                ] },
+                function (error, result) {
+                    try {
+                        url = result.url;
+
+                    } catch (e){
+                        url = null
+                    }
+                });
+            } catch (e) {
+                url = null
+            }
         return url;
     }
 }
