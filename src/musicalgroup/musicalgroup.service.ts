@@ -23,14 +23,23 @@ export class MusicalGroupService {
   async createMusicalGroup(musicalgroupDto: MusicalGroupDto) {
     var cloudinary = new Cloudinary()
 
-    // Subir imagen
-    var url = await cloudinary.uploadImage(musicalgroupDto.image, musicalgroupDto.username + "/profileImage/")
-
-    musicalgroupDto.image = url
+    if(musicalgroupDto.image){
+      var url = await cloudinary.uploadImage(musicalgroupDto.image, musicalgroupDto.username + "/profileImage/")
+      musicalgroupDto.image = url
+     }
     return this.dataBase.addNewMusicalGroup(musicalgroupDto);
   }
 
-  updateMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+  async updateMusicalGroup(musicalgroupDto: MusicalGroupDto) {
+    var cloudinary = new Cloudinary()
+    
+      var url = await cloudinary.uploadImage(musicalgroupDto.image, musicalgroupDto.username + "/profileImage/")
+      
+      if(url) {
+        musicalgroupDto.image = url
+      }
+
+
     return this.dataBase.updateMusicalGroup(musicalgroupDto);
   }
 
