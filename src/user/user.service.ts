@@ -15,4 +15,8 @@ export class UserService {
   createUser(userDto: UserDto) {
     return this.dataBase.addNewUser(userDto);
   }
+
+  isPerson(id: number) {
+    return this.dataBase.isPerson(id);
+  }
 }

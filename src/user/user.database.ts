@@ -127,4 +127,16 @@ export class UserDataBaseConnection extends DataBaseConnection {
 
     return idPerson;
   }
+
+  async isPerson(id: number) {
+    let query = `SELECT id FROM Person WHERE id = '${id}'`;
+
+    const result = await this.knex.raw(query);
+
+    console.log("compruebo que es una persona el usuario");
+    //result[0] == []
+
+    console.log(result[0].length);
+
+  }
 }
