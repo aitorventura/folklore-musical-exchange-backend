@@ -20,6 +20,9 @@ import { MusicalExchangeDataBaseConnection } from './musicalexchange/musicalexch
 import { SubscriptionController } from './subscription/subscription.controller';
 import { SubscriptionService } from './subscription/subscription.service';
 import { SubscriptionDataBaseConnection } from './subscription/subscription.database';
+import { SubscriptionMGController } from './subscriptionMG/subscriptionMG.controller';
+import { SubscriptionMGService } from './subscriptionMG/subscriptionMG.service';
+import { SubscriptionMGDataBaseConnection } from './subscriptionMG/subscriptionMG.database';
 import { LoginController } from './login/login.controller';
 import { LoginDataBaseConnection } from './login/login.database';
 import { LoginService } from './login/login.service';
@@ -47,7 +50,8 @@ const jwtServiceProvider = {
     TypeController,
     MusicalExchangeController,
     SubscriptionController,
-    LoginController
+    LoginController,
+    SubscriptionMGController,
   ],
   providers: [
     jwtServiceProvider,
@@ -67,6 +71,8 @@ const jwtServiceProvider = {
     SubscriptionDataBaseConnection,
     LoginDataBaseConnection,
     LoginService,
+    SubscriptionMGDataBaseConnection,
+    SubscriptionMGService,
   ],
 })
-export class AppModule {}
+export class AppModule { }

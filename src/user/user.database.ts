@@ -152,10 +152,10 @@ export class UserDataBaseConnection extends DataBaseConnection {
 
     const result = await this.knex.raw(query);
 
-    console.log("compruebo que es una persona el usuario");
-    //result[0] == []
-
-    console.log(result[0].length);
+    if (result[0].length != 0) {
+      return true;
+    }
+    return false;
   }
 
   randomInt(min, max) {

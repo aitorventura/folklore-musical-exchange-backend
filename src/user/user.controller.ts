@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
-import { isExpression } from '@babel/types';
+//import { isExpression } from '@babel/types';
 
 @Controller('user')
 export class UserController {
@@ -11,9 +11,10 @@ export class UserController {
     return this.userService.getUser();
   }
 
-  @Get(':id')
-  isExpression(@Param('id') id: number) {
-    return this.userService.isPerson(id);
+  @Get(':id/check')
+  isPerson(@Param('id') id: number) {
+    let result = this.userService.isPerson(id);
+    return result;
   }
 
   @Post('/create')
