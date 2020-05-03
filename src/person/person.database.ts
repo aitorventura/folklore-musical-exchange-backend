@@ -65,6 +65,7 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
     SALIDA 4: Error al modificar la persona
     */
     personDto.role = 'PERSON';
+    
     const updated = await this.updateUser(personDto);
     if (updated != 0) {
       console.log('Resultado: ' + updated);

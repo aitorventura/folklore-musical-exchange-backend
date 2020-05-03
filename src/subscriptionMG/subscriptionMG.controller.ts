@@ -18,13 +18,15 @@ export class SubscriptionMGController {
   async isSubscribed(
     @Param('idPerson') idPerson: number,
     @Param('idMGroup') idMGroup: number) {
+      console.log(idPerson)
+      console.log(idMGroup)
 
-    return this.subscriptionMGService.isSubscribed(idPerson, idMGroup);
+    return await this.subscriptionMGService.isSubscribed(idPerson, idMGroup);
   }
 
   @Post('/create')
   async createSubscription(@Body() subscriptionMGDto: SubscriptionMGDto) {
-    return this.subscriptionMGService.createSubscriptionMG(subscriptionMGDto);
+    return await this.subscriptionMGService.createSubscriptionMG(subscriptionMGDto);
   }
 
   @Delete(':idPerson/:idMGroup')
@@ -32,6 +34,6 @@ export class SubscriptionMGController {
     @Param('idPerson') idPerson: number,
     @Param('idMGroup') idMGroup: number,
   ) {
-    return this.subscriptionMGService.deleteSubscriptionMG(idPerson, idMGroup);
+    return await this.subscriptionMGService.deleteSubscriptionMG(idPerson, idMGroup);
   }
 }
