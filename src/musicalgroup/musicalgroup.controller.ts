@@ -63,6 +63,7 @@ export class MusicalGroupController {
     @Body() musicalGroupDto: MusicalGroupDto,
   ) {
 
+    console.log("ENTRO al update")
     if(requester.role !== RequesterRole.MGROUP || requester.id !== parseInt(id)){
       throw new ForbiddenException();
     }
