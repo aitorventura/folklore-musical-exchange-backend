@@ -30,6 +30,7 @@ import { JwtService } from './shared/services/jwt.service';
 import * as jwt from 'jsonwebtoken';
 
 import { config } from 'dotenv';
+import { EmailService } from './shared/services/email.service';
 
 config();
 const jwtServiceProvider = {
@@ -52,8 +53,10 @@ const jwtServiceProvider = {
     SubscriptionController,
     LoginController,
     SubscriptionMGController,
+
   ],
   providers: [
+    EmailService,
     jwtServiceProvider,
     AppService,
     DataBaseConnection,

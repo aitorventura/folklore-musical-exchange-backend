@@ -1,9 +1,12 @@
 import { MusicalGroupDto } from './musicalgroup.dto';
 import { UserDataBaseConnection } from 'src/user/user.database';
+import { EmailService } from '../shared/services/email.service';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
   knex;
-  constructor() {
+  constructor(private readonly emailService: EmailService) {
     super();
   }
 
@@ -62,6 +65,8 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
     try {
       await this.knex.raw(query);
+      this.emailService.sendWelcomeEmail(musicalgroupDto.email, musicalgroupDto.name)
+
       return 0;
     } catch (error) {
       return 4;
@@ -94,6 +99,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     try {
       if (updated === 0) {
         await this.knex.raw(query);
+
         return 0;
       }
     } catch (error) {

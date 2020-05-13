@@ -1,18 +1,25 @@
 
-//instalar npm i cloudinary
-const cloudinary = require('cloudinary')
+var nodemailer = require('nodemailer');
 
-
-cloudinary.config({
-  cloud_name: "dy4pv8x5g",
-  api_key: "144845175973356",
-  api_secret: "YMhOEUMxhDxDv8tp6EhQ0CsWn_8"
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'folkloremusicalexchange@gmail.com',
+    pass: 'fme2020!'
+  }
 });
 
+var mailOptions = {
+  from: 'folkloremusicalexchange@gmail.com',
+  to: 'aitorventura6@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
 
-//método que sube la imagen
-cloudinary.v2.uploader.upload("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-  function (error, result) {
-    const val = result.url
-    console.log(val)
-  });
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});

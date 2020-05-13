@@ -1,9 +1,12 @@
 import { PersonDto } from './person.dto';
 import { UserDataBaseConnection } from 'src/user/user.database';
+import { EmailService } from '../shared/services/email.service';
+import { Inject, Injectable } from '@nestjs/common';
 
+@Injectable()
 export class PersonDataBaseConnection extends UserDataBaseConnection {
   knex;
-  constructor() {
+  constructor(private readonly emailService: EmailService) {
     super();
   }
 
@@ -50,6 +53,9 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
 
     try {
       await this.knex.raw(query);
+      console.log("Voy a mandar el email")
+      console.log(this.emailService)
+      this.emailService.sendWelcomeEmail(personDto.email, personDto.name)
       return 0;
     } catch (error) {
       return 4;
