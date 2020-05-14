@@ -1,9 +1,14 @@
 import { MusicalExchangeDto } from './musicalexchange.dto';
 import { DataBaseConnection } from 'src/app.database';
+import { Injectable } from '@nestjs/common';
+import {EmailService} from 'src/shared/services/email.service'
+import { MusicalGroupDataBaseConnection } from '../musicalgroup/musicalgroup.database';
 
+@Injectable()
 export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   knex;
-  constructor() {
+  constructor(private readonly emailService?: EmailService,
+              private readonly mgroupDataBaseConnection ?: MusicalGroupDataBaseConnection) {
     super();
   }
 
@@ -70,6 +75,14 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
 
     try {
       await this.knex.raw(query);
+      const emails  = await this.getEmailsOfUsersSuscriptedToAgrupation(musicalexchangeDto.idMGroupA, musicalexchangeDto.idMGroupB);  
+
+      const mgroupA = await this.mgroupDataBaseConnection.getMusicalGroup(musicalexchangeDto.idMGroupA);
+      const mgroupB = await this.mgroupDataBaseConnection.getMusicalGroup(musicalexchangeDto.idMGroupB);
+
+      
+      this.emailService.sendNewMusicalExchangeEmail(emails, mgroupA[0].name ,  mgroupB[0].name)
+      
       return true;
     } catch (error) {
       return false;
@@ -138,5 +151,26 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
     } catch (error) {
       console.log('Error en consulta getMusicalExchange(id)');
     }
+  }
+
+
+  async getEmailsOfUsersSuscriptedToAgrupation(agrupationA:number, agrupationB:number): Promise<string[]> {
+      let query = await this.knex("User")
+      .select("User.email")
+      .innerJoin('Person', 'User.id', 'Person.id')
+      .innerJoin('MGroupSubscription', 'Person.id', 'MGroupSubscription.idPerson')
+      .where(this.knex.raw(`MGroupSubscription.idMGroup = ${agrupationA} OR MGroupSubscription.idMGroup = ${agrupationB}`))
+      
+
+      var result = []
+
+      for(var obj of query){
+        result.push(obj.email)
+      }
+
+      console.log(result)
+      return result
+
+
   }
 }

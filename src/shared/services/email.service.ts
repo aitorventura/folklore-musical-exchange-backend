@@ -27,6 +27,32 @@ export class EmailService {
    
   }
 
+
+  sendNewMusicalExchangeEmail(listEmails: string[], mgroupA: string, mgroupB:string) {
+    var transporter = initialize();
+
+    for(var email of listEmails){
+      var mailOptions = {
+        from: 'folkloremusicalexchange@gmail.com',
+        to: email,
+        subject: 'Nuevo intercambio musical',
+        html: `<h1>¡Nuevo intercambio musical!</h1><p>Hola, </p><p>Se ha creado un nuevo intercambio musical entre ${mgroupA} y ${mgroupB}, no dudes en visitar el listado de intercambios de nuestra plataforma para no perderte ninguno.</p><p> ¡Un fuerte saludo!, El equipo de Folklore Musical Exchange </p>`
+      };
+
+      console.log(mailOptions)
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+    }
+    
+   
+  }
+
  
 }
 
