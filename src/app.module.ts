@@ -28,6 +28,9 @@ import { LoginDataBaseConnection } from './login/login.database';
 import { LoginService } from './login/login.service';
 import { JwtService } from './shared/services/jwt.service';
 import * as jwt from 'jsonwebtoken';
+import { ChatController } from './chat/chat.controller';
+import { ChatDataBaseConnection } from './chat/chat.database';
+import { ChatService } from './chat/chat.service';
 
 import { config } from 'dotenv';
 import { EmailService } from './shared/services/email.service';
@@ -36,10 +39,9 @@ config();
 const jwtServiceProvider = {
   provide: JwtService,
   useFactory: () => {
-    return new JwtService(jwt, "fme");
+    return new JwtService(jwt, 'fme');
   },
 };
-
 
 @Module({
   imports: [],
@@ -53,7 +55,7 @@ const jwtServiceProvider = {
     SubscriptionController,
     LoginController,
     SubscriptionMGController,
-
+    ChatController,
   ],
   providers: [
     EmailService,
@@ -76,6 +78,8 @@ const jwtServiceProvider = {
     LoginService,
     SubscriptionMGDataBaseConnection,
     SubscriptionMGService,
+    ChatDataBaseConnection,
+    ChatService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
