@@ -10,6 +10,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { ChatDto } from '../chat/chat.dto';
+import { MessageDto } from '../chat/message.dto';
 import { ChatService } from '../chat/chat.service';
 import { ChatDataBaseConnection } from './chat.database';
 /*
@@ -63,16 +64,27 @@ export class ChatController {
     const result = await this.chatService.getParticipant(idChat, id);
     return result;
   }
-  /*
-  @Post('/create')
-  @UseGuards(AuthGuard)
-  async createChat(@AuthUser() requester: Requester, @Body() chatDto: ChatDto) {
-    if (requester.role !== RequesterRole.MGROUP) {
-      throw new ForbiddenException();
-    }
-    return this.chatService.createChat(chatDto);
+
+  @Post('/newmsg/:idChat')
+  async createMessage(
+    @Param('idChat') idChat: number,
+    @Body() messageDto: MessageDto,
+  ) {
+    /*console.log('Controlador: ');
+    console.log(
+      'CONTROLADOR... id: ' +
+        idChat +
+        ' content: ' +
+        messageDto.content +
+        ' partId: ' +
+        messageDto.participantId +
+        ' timestamp: ' +
+        messageDto.timestamp,
+    );*/
+
+    return await this.chatService.createMessage(idChat, messageDto);
   }
-*/
+
   /*
   @Delete(':id')
   @UseGuards(AuthGuard)

@@ -1,4 +1,5 @@
 import { ChatDto } from './chat.dto';
+import { MessageDto } from './message.dto';
 import { DataBaseConnection } from 'src/app.database';
 import { Injectable } from '@nestjs/common';
 
@@ -13,7 +14,24 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   async getChats(id: number) {
     //console.log('getChats BBDD TODOS');
     try {
-      let query = `SELECT Chat.id, Chat.idA, Chat.idB, 
+      let query = `SELECT Chat.id, Chat.idA, Chat.idB,
+      CASE
+      WHEN Chat.idA = ${id} THEN 
+        CASE 
+          WHEN MGroupB.name IS NOT NULL THEN MGroupB.name 
+          WHEN PersonB.name IS NOT NULL THEN PersonB.name
+        END
+      ELSE    
+        CASE 
+          WHEN MGroupA.name IS NOT NULL THEN MGroupA.name 
+          WHEN PersonA.name IS NOT NULL THEN PersonA.name
+        END
+      END AS 'name'                    
+      FROM Chat LEFT JOIN MGroup AS MGroupA ON MGroupA.id=Chat.idA LEFT JOIN MGroup AS MGroupB ON MGroupB.id=Chat.idB 
+        LEFT JOIN Person AS PersonA ON PersonA.id=Chat.idA LEFT JOIN Person AS PersonB ON PersonB.id=Chat.idB
+      WHERE Chat.idA=${id} OR Chat.idB=${id}`;
+
+      /*`SELECT Chat.id, Chat.idA, Chat.idB, 
                       CASE 
                         WHEN MGroupA.name IS NOT NULL THEN MGroupA.name 
                         WHEN PersonA.name IS NOT NULL THEN PersonA.name
@@ -24,9 +42,10 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                       END AS 'nombreB'
                     FROM Chat LEFT JOIN MGroup AS MGroupA ON MGroupA.id=Chat.idA LEFT JOIN MGroup AS MGroupB ON MGroupB.id=Chat.idB 
                       LEFT JOIN Person AS PersonA ON PersonA.id=Chat.idA LEFT JOIN Person AS PersonB ON PersonB.id=Chat.idB
-                    WHERE Chat.idA=${id} OR Chat.idB=${id}`;
+                    WHERE Chat.idA=${id} OR Chat.idB=${id}`;*/
 
       const result = await this.knex.raw(query);
+      //console.log('Se obtienen los chats');
       return result[0];
     } catch (error) {
       console.log('Error al obtener los chats.');
@@ -45,6 +64,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     ORDER BY timestamp ASC`;
       const result = await this.knex.raw(query);
       //console.log('Resultado de id: ' + result[0]);
+      //console.log('Se obtienen los mensajes del chat dado un id.');
       return result[0];
     } catch (error) {
       console.log('Error al obtener los mensajes del chat dado un id.');
@@ -59,6 +79,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     WHERE id=${id}`;
       const result = await this.knex.raw(query);
       //console.log('Resultado de id: ' + result[0]);
+      //console.log('Se obtiene myself');
       return result[0];
     } catch (error) {
       console.log('Error al obtener myself.');
@@ -73,6 +94,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     WHERE id=${idParticipante}`;
       const result = await this.knex.raw(query);
       //console.log('Resultado de id: ' + result[0]);
+      //console.log('Se obtiene el participante');
       return result[0];
     } catch (error) {
       console.log('Error al obtener el participante');
@@ -91,9 +113,27 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     WHERE Chat.id=${idChat}`;
       const result = await this.knex.raw(query);
       //Se devuelve el id del otro participante
+      //console.log('Se obtienen los participantes del chat dado un id.');
       return result[0].map(x => x.id);
     } catch (error) {
       console.log('Error al obtener los participantes del chat dado un id.');
+    }
+  }
+
+  async createMessage(idChat: number, messageDto: MessageDto) {
+    console.log('Voy a añadir el mensaje');
+    try {
+      let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId) 
+                    VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId})`;
+
+      //console.log('Query: ' + query);
+      await this.knex.raw(query);
+      //Todo ha salido bien
+      console.log('Se ha enviado el mensaje');
+      return 0;
+    } catch (error) {
+      console.log('Se ha producido un error al intentar enviar el mensaje');
+      return 1;
     }
   }
 

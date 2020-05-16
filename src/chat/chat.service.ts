@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChatDto } from './chat.dto';
+import { MessageDto } from './message.dto';
 import { DataBaseConnection } from '../app.database';
 import { ChatDataBaseConnection } from './chat.database';
 
@@ -23,7 +24,11 @@ export class ChatService {
     return await this.dataBase.getParticipant(idChat, id);
   }
 
-  createChat(chatDto: ChatDto) {
+  async createMessage(idChat: number, messageDto: MessageDto) {
+    return await this.dataBase.createMessage(idChat, messageDto);
+  }
+
+  async createChat(chatDto: ChatDto) {
     return this.dataBase.addNewMessage(chatDto);
   }
 }

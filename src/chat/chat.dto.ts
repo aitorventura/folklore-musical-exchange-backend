@@ -2,8 +2,7 @@
 
 export class ChatDto {
   id: number;
-  idChat: number;
-  content: string;
-  timestamp: Date;
-  participantId: number;
+  date: Date;
+  idA: number;
+  idB: number;
 }
