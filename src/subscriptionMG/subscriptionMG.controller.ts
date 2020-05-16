@@ -18,10 +18,15 @@ export class SubscriptionMGController {
   async isSubscribed(
     @Param('idPerson') idPerson: number,
     @Param('idMGroup') idMGroup: number) {
-      console.log(idPerson)
-      console.log(idMGroup)
+    console.log(idPerson)
+    console.log(idMGroup)
 
     return await this.subscriptionMGService.isSubscribed(idPerson, idMGroup);
+  }
+
+  @Get(':idPerson')
+  async getSubscriptionsMG(@Param('idPerson') idPerson: number) {
+    return await this.subscriptionMGService.getSubscriptionsMG(idPerson);
   }
 
   @Post('/create')

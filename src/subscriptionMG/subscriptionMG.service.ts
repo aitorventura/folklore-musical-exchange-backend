@@ -10,6 +10,10 @@ export class SubscriptionMGService {
     return this.dataBase.addNewSubscriptionMG(subscriptionMGDto);
   }
 
+  getSubscriptionsMG(idPerson: number) {
+    return this.dataBase.getSubscriptionsMG(idPerson);
+  }
+
   deleteSubscriptionMG(idPerson: number, idMGroup: number) {
     return this.dataBase.deleteSubscriptionMG(idPerson, idMGroup);
   }

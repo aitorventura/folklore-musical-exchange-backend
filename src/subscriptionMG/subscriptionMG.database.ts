@@ -6,14 +6,17 @@ export class SubscriptionMGDataBaseConnection extends UserDataBaseConnection {
   constructor() {
     super();
   }
-  /*
-    async getSubscriptions(id: number) {
-      const result = await this.knex
-        .select('*')
-        .from('TypeSubscription')
-        .where({ idPerson: `${id}` });
-      return result;
-    }*/
+
+  async getSubscriptionsMG(id: number) {
+    let query = `SELECT DISTINCT * FROM User JOIN MGroup ON (User.id = MGroup.id) JOIN MGroupSubscription ON (MGroup.id = MGroupSubscription.idMGroup) WHERE MGroupSubscription.idPerson=${id}`;
+
+    try {
+      let result = await this.knex.raw(query);
+      return result[0];
+    } catch (error) {
+      console.log("ha ocurrido un error al sacar las subscripciones a GRUPOS")
+    }
+  }
 
   async isSubscribed(idPerson: number, idMGroup: number) {
     let query = `SELECT * FROM MGroupSubscription WHERE idPerson=${idPerson} AND idMGroup=${idMGroup}`;
