@@ -12,20 +12,21 @@ export class ChatService {
     return await this.dataBase.getChats(id);
   }
 
-  async getChat(id: number) {
-    return await this.dataBase.getChat(id);
+  async getChat(idA: number, idB: number) {
+    return await this.dataBase.getChat(idA, idB);
   }
 
   async getMyself(id: number) {
     return await this.dataBase.getMyself(id);
   }
 
-  async getParticipant(idChat: number, id: number) {
-    return await this.dataBase.getParticipant(idChat, id);
+  async getParticipant(id: number) {
+    console.log('Servicio');
+    return await this.dataBase.getParticipant(id);
   }
 
-  async createMessage(idChat: number, messageDto: MessageDto) {
-    return await this.dataBase.createMessage(idChat, messageDto);
+  async createMessage(idA: number, idB: number, messageDto: MessageDto) {
+    return await this.dataBase.createMessage(idA, idB, messageDto);
   }
 
   async createChat(chatDto: ChatDto) {

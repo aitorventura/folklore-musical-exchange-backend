@@ -54,17 +54,18 @@ export class ChatDataBaseConnection extends DataBaseConnection {
 
   /**
    * Se obtienen los mensajes de un chat
-   * @param id del chat
+   * @param idA
+   * @param idB
    */
-  async getChat(id: number) {
+  async getChat(idA: number, idB: number) {
     try {
       let query = `SELECT content, participantId, timestamp, 'text' AS 'type'
-                    FROM ChatMessage
-                    WHERE idChat=${id}
+                    FROM ChatMessage JOIN Chat ON Chat.id=ChatMessage.idChat
+                    WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})
                     ORDER BY timestamp ASC`;
+
       const result = await this.knex.raw(query);
-      //console.log('Resultado de id: ' + result[0]);
-      //console.log('Se obtienen los mensajes del chat dado un id.');
+      console.log('Se obtienen los mensajes del chat dado un id.');
       return result[0];
     } catch (error) {
       console.log('Error al obtener los mensajes del chat dado un id.');
@@ -74,9 +75,11 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   async getMyself(id: number) {
     //console.log('getChats(id) bbdd: ' + id);
     try {
+      console.log('getMyself BBDD: ');
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
                     FROM User
                     WHERE id=${id}`;
+      console.log(query);
       const result = await this.knex.raw(query);
       //console.log('Resultado de id: ' + result[0]);
       //console.log('Se obtiene myself');
@@ -86,12 +89,14 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     }
   }
 
-  async getParticipant(idChat: number, id: number) {
-    let idParticipante = await this.getContrario(idChat, id);
+  async getParticipant(id: number) {
+    //let idParticipante = await this.getContrario(idChat, id);
+    console.log('getParticipant BBDD');
     try {
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
                     FROM User
-                    WHERE id=${idParticipante}`;
+                    WHERE id=${id}`;
+      console.log(query);
       const result = await this.knex.raw(query);
       //console.log('Resultado de id: ' + result[0]);
       //console.log('Se obtiene el participante');
@@ -120,13 +125,12 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     }
   }
 
-  async createMessage(idChat: number, messageDto: MessageDto) {
+  async createMessage(idA: number, idB: number, messageDto: MessageDto) {
+    let idChat = await this.getIdChat(idA, idB);
     console.log('Voy a añadir el mensaje');
     try {
       let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId) 
                     VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId})`;
-
-      //console.log('Query: ' + query);
       await this.knex.raw(query);
       //Todo ha salido bien
       console.log('Se ha enviado el mensaje');
@@ -134,6 +138,19 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     } catch (error) {
       console.log('Se ha producido un error al intentar enviar el mensaje');
       return 1;
+    }
+  }
+
+  async getIdChat(idA: number, idB: number) {
+    //Obtenemos el código del participante del chat
+    try {
+      let query = `SELECT id FROM Chat WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})`;
+      const result = await this.knex.raw(query);
+      //Se devuelve el id del otro participante
+      //console.log('Se obtienen los participantes del chat dado un id.');
+      return result[0].map(x => x.id);
+    } catch (error) {
+      console.log('Error al obtener el id del chat.');
     }
   }
 

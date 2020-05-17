@@ -25,28 +25,12 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   /**
-   * Se obtienen todos los chats en los que participa un usuario
-   */
-  @Get('/all/:id')
-  async getChats(@Param('id') id: number) {
-    return await this.chatService.getChats(id);
-  }
-
-  /**
-   * Se obtienen los mensajes de un chat con una persona
-   * @param id del chat
-   */
-  @Get(':id')
-  async getChat(@Param('id') id: number) {
-    const result = await this.chatService.getChat(id);
-    return result;
-  }
-  /**
-   * Se obtienen los datos del receptor
+   * Se obtienen los datos de un usuario dado el id
    * @param id del usuario en sesión
    */
   @Get('/myself/:id')
   async getMyself(@Param('id') id: number) {
+    console.log('Controlador, id: ' + id);
     const result = await this.chatService.getMyself(id);
     return result[0];
   }
@@ -56,18 +40,36 @@ export class ChatController {
    * @param idChat
    * @param id
    */
-  @Get('participant/:idChat/:id')
-  async getParticipant(
-    @Param('idChat') idChat: number,
-    @Param('id') id: number,
-  ) {
-    const result = await this.chatService.getParticipant(idChat, id);
+  @Get('/participant/:id')
+  async getParticipant(@Param('id') id: number) {
+    console.log('controlador');
+    const result = await this.chatService.getParticipant(id);
     return result;
   }
 
-  @Post('/newmsg/:idChat')
+  /**
+   * Se obtienen todos los chats en los que participa un usuario
+   */
+  @Get('/all/:id')
+  async getChats(@Param('id') id: number) {
+    return await this.chatService.getChats(id);
+  }
+
+  /**
+   * Se obtienen los mensajes de un chat con una persona
+   * @param idA
+   * @param idB
+   */
+  @Get('/:idA/:idB')
+  async getChat(@Param('idA') idA: number, @Param('idB') idB: number) {
+    const result = await this.chatService.getChat(idA, idB);
+    return result;
+  }
+
+  @Post('/newmsg/:idA/:idB')
   async createMessage(
-    @Param('idChat') idChat: number,
+    @Param('idA') idA: number,
+    @Param('idB') idB: number,
     @Body() messageDto: MessageDto,
   ) {
     /*console.log('Controlador: ');
@@ -82,7 +84,7 @@ export class ChatController {
         messageDto.timestamp,
     );*/
 
-    return await this.chatService.createMessage(idChat, messageDto);
+    return await this.chatService.createMessage(idA, idB, messageDto);
   }
 
   /*
