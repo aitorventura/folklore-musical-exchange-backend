@@ -2,6 +2,7 @@ import { MusicalGroupDto } from './musicalgroup.dto';
 import { UserDataBaseConnection } from 'src/user/user.database';
 import { EmailService } from '../shared/services/email.service';
 import { Injectable } from '@nestjs/common';
+import { PersonDataBaseConnection } from '../person/person.database';
 
 @Injectable()
 export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
@@ -66,6 +67,8 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     try {
       await this.knex.raw(query);
       this.emailService.sendWelcomeEmail(musicalgroupDto.email, musicalgroupDto.name)
+      const emails  = await this.getEmailsOfUsersSuscriptedToAType(musicalgroupDto.nameType)
+      this.emailService.sendNewGroupOfType(emails, musicalgroupDto.name, musicalgroupDto.nameType)
 
       return 0;
     } catch (error) {
@@ -137,4 +140,25 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
       console.log('Error en consulta getMusicalExchange(id)');
     }
   }
+
+  async getEmailsOfUsersSuscriptedToAType(type:string): Promise<string[]> {
+
+    let query = await this.knex("User")
+    .select("User.email")
+    .innerJoin('Person', 'User.id', 'Person.id')
+    .innerJoin('TypeSubscription', 'Person.id', 'TypeSubscription.idPerson')
+    .where(this.knex.raw(`TypeSubscription.nameType = '${type}'`))
+    
+    console.log(query.toString())
+    var result = []
+
+    for(var obj of query){
+      result.push(obj.email)
+    }
+
+    console.log(result)
+    return result
+
+
+}
 }

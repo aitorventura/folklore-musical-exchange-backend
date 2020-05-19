@@ -19,7 +19,7 @@ export class EmailService {
       
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-          console.log(error);
+          console.log("Fallo al enviar")
         } else {
           console.log('Email sent: ' + info.response);
         }
@@ -53,8 +53,41 @@ export class EmailService {
    
   }
 
- 
+  sendNewGroupOfType(listEmails: string[], nameAgrupation:string, nameType:string){
+    console.log(listEmails)
+    console.log(nameAgrupation)
+    console.log(nameType)
+    console.log("Entro aqui")
+    var done = true;
+    if(!listEmails || listEmails.length === 0){
+      done = false;
+    }
+    if(done){
+    var transporter = initialize();
+  
+    for(var email of listEmails){
+      var mailOptions = {
+        from: 'folkloremusicalexchange@gmail.com',
+        to: email,
+        subject: 'Nueva agrupación musical',
+        html: `<h1>¡Nueva agrupación musical!</h1><p>Hola, </p><p>Se ha creado una nueva agrupación musical llamada ${nameAgrupation} del tipo ${nameType}, no dudes en visitar el listado de agrupaciones de nuestra plataforma para estar al corriente de todas las nuevas agrupaciones.</p><p> ¡Un fuerte saludo!, El equipo de Folklore Musical Exchange </p>`
+      };
+  
+      console.log(mailOptions)
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+    }
+    
+  }
 }
+}
+
 
 
 
