@@ -28,8 +28,4 @@ export class ChatService {
   async createMessage(idA: number, idB: number, messageDto: MessageDto) {
     return await this.dataBase.createMessage(idA, idB, messageDto);
   }
-
-  async createChat(chatDto: ChatDto) {
-    return this.dataBase.addNewMessage(chatDto);
-  }
 }

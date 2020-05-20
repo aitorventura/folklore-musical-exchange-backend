@@ -72,18 +72,6 @@ export class ChatController {
     @Param('idB') idB: number,
     @Body() messageDto: MessageDto,
   ) {
-    /*console.log('Controlador: ');
-    console.log(
-      'CONTROLADOR... id: ' +
-        idChat +
-        ' content: ' +
-        messageDto.content +
-        ' partId: ' +
-        messageDto.participantId +
-        ' timestamp: ' +
-        messageDto.timestamp,
-    );*/
-
     return await this.chatService.createMessage(idA, idB, messageDto);
   }
 

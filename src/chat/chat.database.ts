@@ -2,6 +2,7 @@ import { ChatDto } from './chat.dto';
 import { MessageDto } from './message.dto';
 import { DataBaseConnection } from 'src/app.database';
 import { Injectable } from '@nestjs/common';
+import { isNullOrUndefined } from 'util';
 
 @Injectable()
 export class ChatDataBaseConnection extends DataBaseConnection {
@@ -90,16 +91,12 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getParticipant(id: number) {
-    //let idParticipante = await this.getContrario(idChat, id);
     console.log('getParticipant BBDD');
     try {
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
                     FROM User
                     WHERE id=${id}`;
-      console.log(query);
       const result = await this.knex.raw(query);
-      //console.log('Resultado de id: ' + result[0]);
-      //console.log('Se obtiene el participante');
       return result[0];
     } catch (error) {
       console.log('Error al obtener el participante');
@@ -118,7 +115,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     WHERE Chat.id=${idChat}`;
       const result = await this.knex.raw(query);
       //Se devuelve el id del otro participante
-      //console.log('Se obtienen los participantes del chat dado un id.');
+      //Se obtienen los participantes del chat dado un id.
       return result[0].map(x => x.id);
     } catch (error) {
       console.log('Error al obtener los participantes del chat dado un id.');
@@ -147,54 +144,22 @@ export class ChatDataBaseConnection extends DataBaseConnection {
       let query = `SELECT id FROM Chat WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})`;
       const result = await this.knex.raw(query);
       //Se devuelve el id del otro participante
-      //console.log('Se obtienen los participantes del chat dado un id.');
-      return result[0].map(x => x.id);
+      //Se obtienen los participantes del chat dado un id.
+      let id = result[0].map(x => x.id);
+      if (!result[0].id) {
+        //No existe ese chat, lo voy a crear.
+        let query1 = `INSERT INTO Chat(idA, idB, date) VALUES ( ${idA} ,  ${idB} , CURRENT_TIMESTAMP)`;
+        const result1 = await this.knex.raw(query1);
+        //Obtengo el id del chat que acabo de crear
+        let query2 = `SELECT id FROM Chat WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})`;
+        const result2 = await this.knex.raw(query2);
+        let id2 = result2[0].map(x => x.id);
+        return id2;
+      }
+      return id;
     } catch (error) {
+      console.log('Entro en el catch');
       console.log('Error al obtener el id del chat.');
     }
-  }
-
-  async addNewMessage(chatDto: ChatDto) {
-    /*
-    //console.log('date: ' + chatDto.date);
-
-    //Pasamos la fecha recibida a tipo String
-    var fecha = chatDto.date.toLocaleString();
-    console.log('fecha: ' + fecha);
-
-    if (chatDto.idMGroupA == chatDto.idMGroupB) {
-      console.log(
-        'Selecciona la otra agrupación con la que quieres hacer el intercambio. No puedes realizar un intercambio contigo mismo',
-      );
-    }
-    if (chatDto.neededMoney == 0) {
-      console.log(
-        'Como el dinero necesario es 0, es decir, no lo han modificado, lo cambio y lo pongo a null',
-      );
-      chatDto.neededMoney = null;
-    }
-
-    let query = `INSERT INTO Chat (idMGroupA, idMGroupB, date, place, description, repertoire, neededMoney, crowdfundingLink) 
-    VALUES (${chatDto.idMGroupA}, ${chatDto.idMGroupB}, '${fecha}', '${chatDto.place}', '${chatDto.description}', '${chatDto.repertoire}', ${chatDto.neededMoney}, '${chatDto.crowdfundingLink}')`;
-
-    try {
-      await this.knex.raw(query);
-      const emails = await this.getEmailsOfUsersSuscriptedToAgrupation(
-        chatDto.idMGroupA,
-        chatDto.idMGroupB,
-      );
-
-      const chatA = await this.chatDataBaseConnection.getChat(
-        chatDto.idMGroupA,
-      );
-      const chatB = await this.chatDataBaseConnection.getChat(
-        chatDto.idMGroupB,
-      );
-
-      return true;
-    } catch (error) {
-      return false;
-    }
-    */
   }
 }
