@@ -60,13 +60,12 @@ export class ChatDataBaseConnection extends DataBaseConnection {
    */
   async getChat(idA: number, idB: number) {
     try {
-      let query = `SELECT content, participantId, timestamp, 'text' AS 'type'
+      let query = `SELECT content, participantId, timestamp, 'true' AS 'viewed' ,'text' AS 'type'
                     FROM ChatMessage JOIN Chat ON Chat.id=ChatMessage.idChat
                     WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})
                     ORDER BY timestamp ASC`;
 
       const result = await this.knex.raw(query);
-      console.log('Se obtienen los mensajes del chat dado un id.');
       return result[0];
     } catch (error) {
       console.log('Error al obtener los mensajes del chat dado un id.');
