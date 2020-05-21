@@ -91,7 +91,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getParticipant(id: number) {
-    console.log('getParticipant BBDD');
+    //console.log('getParticipant BBDD');
     try {
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
                     FROM User
@@ -128,6 +128,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     try {
       let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId) 
                     VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId})`;
+      console.log(query);
       await this.knex.raw(query);
       //Todo ha salido bien
       console.log('Se ha enviado el mensaje');
@@ -146,8 +147,9 @@ export class ChatDataBaseConnection extends DataBaseConnection {
       //Se devuelve el id del otro participante
       //Se obtienen los participantes del chat dado un id.
       let id = result[0].map(x => x.id);
-      if (!result[0].id) {
+      if (id.length === 0) {
         //No existe ese chat, lo voy a crear.
+        console.log('No existe ese chat, lo voy a crear.');
         let query1 = `INSERT INTO Chat(idA, idB, date) VALUES ( ${idA} ,  ${idB} , CURRENT_TIMESTAMP)`;
         const result1 = await this.knex.raw(query1);
         //Obtengo el id del chat que acabo de crear
@@ -158,7 +160,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
       }
       return id;
     } catch (error) {
-      console.log('Entro en el catch');
+      //console.log('Entro en el catch');
       console.log('Error al obtener el id del chat.');
     }
   }
