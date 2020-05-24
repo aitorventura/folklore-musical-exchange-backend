@@ -5,4 +5,5 @@ export class ChatDto {
   date: Date;
   idA: number;
   idB: number;
+  viewed: string;
 }

@@ -15,7 +15,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   async getChats(id: number) {
     //console.log('getChats BBDD TODOS');
     try {
-      let query = `SELECT Chat.id, Chat.idA, Chat.idB,
+      let query = `SELECT Chat.id, Chat.idA, Chat.idB, (SELECT COUNT(*) FROM ChatMessage AS cm WHERE cm.idChat=Chat.id AND cm.participantId != ${id} AND  upper(viewed) LIKE 'FALSE') AS 'unread',
       CASE
       WHEN Chat.idA = ${id} THEN 
         CASE 
@@ -60,9 +60,17 @@ export class ChatDataBaseConnection extends DataBaseConnection {
    */
   async getChat(idA: number, idB: number) {
     try {
-      let query = `SELECT content, participantId, timestamp, 'true' AS 'viewed' ,'text' AS 'type'
+      let idChat = await this.getIdChat(idA, idB);
+
+      //MyId - P
+
+      let query2 = `UPDATE ChatMessage SET viewed='true' WHERE ChatMessage.idChat=${idChat} AND ChatMessage.participantId=${idB}`;
+      await this.knex.raw(query2);
+      //console.log('He actualizado a true la variable viewed');
+
+      let query = `SELECT content, participantId, timestamp, viewed ,'text' AS 'type', 'true' AS 'uploaded'
                     FROM ChatMessage JOIN Chat ON Chat.id=ChatMessage.idChat
-                    WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})
+                    WHERE Chat.id=${idChat}
                     ORDER BY timestamp ASC`;
 
       const result = await this.knex.raw(query);
@@ -125,8 +133,8 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     let idChat = await this.getIdChat(idA, idB);
     console.log('Voy a añadir el mensaje');
     try {
-      let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId) 
-                    VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId})`;
+      let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId, viewed) 
+                    VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId}, 'false')`;
       console.log(query);
       await this.knex.raw(query);
       //Todo ha salido bien
@@ -163,4 +171,5 @@ export class ChatDataBaseConnection extends DataBaseConnection {
       console.log('Error al obtener el id del chat.');
     }
   }
+  //async getUnread(){}
 }
