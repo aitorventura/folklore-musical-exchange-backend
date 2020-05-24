@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { SubscriptionMGDto } from '../subscriptionMG/subscriptionMG.dto';
 import { SubscriptionMGService } from '../subscriptionMG/subscriptionMG.service';
+import { MusicalGroupDto } from 'src/musicalgroup/musicalgroup.dto';
 
 @Controller('subscriptionMG')
 export class SubscriptionMGController {
@@ -18,9 +19,6 @@ export class SubscriptionMGController {
   async isSubscribed(
     @Param('idPerson') idPerson: number,
     @Param('idMGroup') idMGroup: number) {
-    console.log(idPerson)
-    console.log(idMGroup)
-
     return await this.subscriptionMGService.isSubscribed(idPerson, idMGroup);
   }
 

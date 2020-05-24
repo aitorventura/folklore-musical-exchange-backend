@@ -13,7 +13,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   }
 
   async getMusicalExchanges() {
-    console.log('getMusicalExchanges BBDD TODOS');
     try {
       let query = `SELECT m.id, m.idMGroupA, m.idMGroupB, m.date, m.place, m.description, m.repertoire, m.neededMoney, m.crowdfundingLink, mA.name as nombreMA, mB.name as nombreMB, iA.image as imageA, iB.image as imageB
                    FROM MusicalExchange as m
@@ -22,13 +21,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
                    JOIN User AS iA ON iA.id=m.idMGroupA
                    JOIN User AS iB ON iB.id=m.idMGroupB
                    `;
-      /*const result = await this.knex
-        .select('*')
-        .from('MusicalExchange')
-        .innerJoin(this.knex.raw("MGroup as g1 ON MGroup.id = MusicalExchange.idMGroupA"))
-        .innerJoin(this.knex.raw("MGroup as g2 ON MGroup.id = MusicalExchange.idMGroupB"))
-        .where('MusicalExchange.date' >= 'CURRENT_TIMESTAMP');
-      console.log('Intercambios: ' + result);*/
       const result = await this.knex.raw(query);
       return result[0];
     } catch (error) {

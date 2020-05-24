@@ -7,6 +7,24 @@ export class SubscriptionMGDataBaseConnection extends UserDataBaseConnection {
     super();
   }
 
+  /*
+  async getMusicalExchanges() {
+    try {
+      let query = `SELECT m.id, m.idMGroupA, m.idMGroupB, m.date, m.place, m.description, m.repertoire, m.neededMoney, m.crowdfundingLink, mA.name as nombreMA, mB.name as nombreMB, iA.image as imageA, iB.image as imageB
+                   FROM MusicalExchange as m
+                   JOIN MGroup AS mA ON mA.id=m.idMGroupA 
+                   JOIN MGroup AS mB ON mB.id=m.idMGroupB
+                   JOIN User AS iA ON iA.id=m.idMGroupA
+                   JOIN User AS iB ON iB.id=m.idMGroupB
+                   `;
+      const result = await this.knex.raw(query);
+      return result[0];
+    } catch (error) {
+      console.log('Error al obtener los intercambios.');
+    }
+  }
+  */
+
   async getSubscriptionsMG(id: number) {
     let query = `SELECT DISTINCT * FROM User JOIN MGroup ON (User.id = MGroup.id) JOIN MGroupSubscription ON (MGroup.id = MGroupSubscription.idMGroup) WHERE MGroupSubscription.idPerson=${id}`;
 
@@ -15,6 +33,18 @@ export class SubscriptionMGDataBaseConnection extends UserDataBaseConnection {
       return result[0];
     } catch (error) {
       console.log("ha ocurrido un error al sacar las subscripciones a GRUPOS")
+    }
+
+    try {
+      let query = `SELECT DISTINCT m.id, m.name, m.description, m.members, m.nameType, u.image
+      FROM User AS u
+      JOIN MGroup AS m ON u.id=m.id
+      JOIN MGroupSubscription AS s ON m.id=s.idMGroup
+      WHERE s.idPerson=${id}`;
+      const result = await this.knex.raw(query);
+      return result[0];
+    } catch (error) {
+      console.log('Error al obtener los intercambios.');
     }
   }
 
