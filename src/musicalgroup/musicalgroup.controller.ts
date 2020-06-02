@@ -45,26 +45,30 @@ export class MusicalGroupController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  async deleteMusicalGroup(@AuthUser() requester: Requester, @Param('id') id: string) {
-    console.log("GO")
-    if(requester.role !== RequesterRole.MGROUP || requester.id !== parseInt(id)){
-      console.log("error")
-
+  async deleteMusicalGroup(
+    @AuthUser() requester: Requester,
+    @Param('id') id: string,
+  ) {
+    if (
+      requester.role !== RequesterRole.MGROUP ||
+      requester.id !== parseInt(id)
+    ) {
       throw new ForbiddenException();
     }
-    console.log(this.musicalgroupService.deleteMusicalGroup(parseInt(id)))
     return this.musicalgroupService.deleteMusicalGroup(parseInt(id));
   }
 
   @Put(':id')
   @UseGuards(AuthGuard)
-  async updateMusicalGroup(@AuthUser() requester: Requester,
+  async updateMusicalGroup(
+    @AuthUser() requester: Requester,
     @Param('id') id: string,
     @Body() musicalGroupDto: MusicalGroupDto,
   ) {
-
-    console.log("ENTRO al update")
-    if(requester.role !== RequesterRole.MGROUP || requester.id !== parseInt(id)){
+    if (
+      requester.role !== RequesterRole.MGROUP ||
+      requester.id !== parseInt(id)
+    ) {
       throw new ForbiddenException();
     }
     musicalGroupDto.id = parseInt(id);

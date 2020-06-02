@@ -19,14 +19,6 @@ export class TypeController {
     return await this.typeService.getTypes();
   }
 
-  /* No es necesario, con el de arriba me sirve
-  @Get('/names')
-  async getNameTypes(@Body() typeDto: TypeDto) {
-    console.log('Get de names');
-    return await this.typeService.getNameTypes();
-  }
-  */
-
   @Get(':name')
   async getType(@Param('name') name: string) {
     const result = await this.typeService.getType(name);

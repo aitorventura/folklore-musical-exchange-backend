@@ -40,8 +40,6 @@ export class PersonController {
       requester.role !== RequesterRole.PERSON ||
       parseInt(id) !== requester.id
     ) {
-      console.log('Recurso');
-
       throw new ForbiddenException();
     }
     const result = await this.personService.getPerson(parseInt(id));

@@ -38,7 +38,6 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     return result;
   }
 
-
   async addNewMusicalGroup(musicalgroupDto: MusicalGroupDto) {
     /*
     SALIDA 0: Todo funciona correctamente
@@ -48,7 +47,7 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     SALIDA 4: Error al crear la agrupación
     */
     //musicalgroupDto.image = null;
-    console.log("musicalgroupDto.image: ", musicalgroupDto.image);
+    console.log('musicalgroupDto.image: ', musicalgroupDto.image);
     musicalgroupDto.role = 'MGROUP';
 
     const isAdded = await this.addNewUser(musicalgroupDto);
@@ -66,9 +65,18 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
     try {
       await this.knex.raw(query);
-      this.emailService.sendWelcomeEmail(musicalgroupDto.email, musicalgroupDto.name)
-      const emails  = await this.getEmailsOfUsersSuscriptedToAType(musicalgroupDto.nameType)
-      this.emailService.sendNewGroupOfType(emails, musicalgroupDto.name, musicalgroupDto.nameType)
+      this.emailService.sendWelcomeEmail(
+        musicalgroupDto.email,
+        musicalgroupDto.name,
+      );
+      const emails = await this.getEmailsOfUsersSuscriptedToAType(
+        musicalgroupDto.nameType,
+      );
+      this.emailService.sendNewGroupOfType(
+        emails,
+        musicalgroupDto.name,
+        musicalgroupDto.nameType,
+      );
 
       return 0;
     } catch (error) {
@@ -114,7 +122,9 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
   async deleteMusicalGroup(musicalgroupId: number) {
     try {
       if ((await this.getMusicalExchange(musicalgroupId)).length > 0) {
-        console.log('No se puede eliminar porque tiene un intercambio pendiente');
+        console.log(
+          'No se puede eliminar porque tiene un intercambio pendiente',
+        );
         //TODO: Tiene que saltar una excepción para mostrársela al usuario
         return false;
       }
@@ -141,24 +151,21 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     }
   }
 
-  async getEmailsOfUsersSuscriptedToAType(type:string): Promise<string[]> {
+  async getEmailsOfUsersSuscriptedToAType(type: string): Promise<string[]> {
+    let query = await this.knex('User')
+      .select('User.email')
+      .innerJoin('Person', 'User.id', 'Person.id')
+      .innerJoin('TypeSubscription', 'Person.id', 'TypeSubscription.idPerson')
+      .where(this.knex.raw(`TypeSubscription.nameType = '${type}'`));
 
-    let query = await this.knex("User")
-    .select("User.email")
-    .innerJoin('Person', 'User.id', 'Person.id')
-    .innerJoin('TypeSubscription', 'Person.id', 'TypeSubscription.idPerson')
-    .where(this.knex.raw(`TypeSubscription.nameType = '${type}'`))
-    
-    console.log(query.toString())
-    var result = []
+    //console.log(query.toString())
+    var result = [];
 
-    for(var obj of query){
-      result.push(obj.email)
+    for (var obj of query) {
+      result.push(obj.email);
     }
 
-    console.log(result)
-    return result
-
-
-}
+    //console.log(result)
+    return result;
+  }
 }

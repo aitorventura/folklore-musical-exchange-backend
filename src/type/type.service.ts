@@ -10,12 +10,6 @@ export class TypeService {
     return await this.dataBase.getTypes();
   }
 
-  /* No necesario
-  async getNameTypes() {
-    return await this.dataBase.getNameTypes();
-  }
-  */
-
   async getType(name: string) {
     return await this.dataBase.getType(name);
   }

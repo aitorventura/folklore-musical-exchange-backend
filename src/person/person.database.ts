@@ -25,7 +25,6 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
       .from('Person')
       .innerJoin('User', 'Person.id', 'User.id')
       .where({ 'Person.id': `${id}` });
-    console.log(result);
     return result;
   }
 
@@ -42,7 +41,6 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
     const isAdded = await this.addNewUser(personDto);
     if (isAdded != 0) {
       //Si ha habido un problema devuelvo el código
-      console.log('Return: ' + isAdded);
       return isAdded;
     }
 
@@ -53,9 +51,7 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
 
     try {
       await this.knex.raw(query);
-      console.log("Voy a mandar el email")
-      console.log(this.emailService)
-      this.emailService.sendWelcomeEmail(personDto.email, personDto.name)
+      this.emailService.sendWelcomeEmail(personDto.email, personDto.name);
       return 0;
     } catch (error) {
       return 4;
@@ -71,10 +67,9 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
     SALIDA 4: Error al modificar la persona
     */
     personDto.role = 'PERSON';
-    
+
     const updated = await this.updateUser(personDto);
     if (updated != 0) {
-      console.log('Resultado: ' + updated);
       //Si ha habido un problema devuelvo el código
       return updated;
     }
@@ -94,15 +89,12 @@ export class PersonDataBaseConnection extends UserDataBaseConnection {
 
   async deletePerson(id: number) {
     try {
-      console.log('Entro en la BBDD');
       let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${id}`;
 
-      console.log('query ' + query);
       const result = await this.knex.raw(query);
       return true;
     } catch (error) {
       return false;
     }
   }
-
 }

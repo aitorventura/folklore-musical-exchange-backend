@@ -30,9 +30,7 @@ export class SubscriptionController {
     @Param('id') id: number,
     @Body() subscriptions: string[],
   ) {
-    console.log('paso por el controlador de suscripiones');
     for (let sub of subscriptions) {
-      console.log(sub);
     }
 
     //return this.subscriptionService.updateSubscriptions(subscriptions);

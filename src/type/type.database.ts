@@ -6,21 +6,11 @@ export class TypeDataBaseConnection extends DataBaseConnection {
     const result = await this.knex.select('*').from('Type');
     return result;
   }
-
-  /* No es necesario
-  async getNameTypes() {
-    console.log('Get Names Types BBDD');
-    const result = await this.knex.select('name').from('Type');
-    return result;
-  }
-  */
-
   async getType(name: string) {
     const result = await this.knex
       .select('*')
       .from('Type')
       .where({ 'Type.name': `${name}` });
-    console.log('getType(name) de la BBDD: ' + result);
     return result;
   }
 
@@ -55,8 +45,6 @@ export class TypeDataBaseConnection extends DataBaseConnection {
   async deleteType(name: string) {
     try {
       let query = `DELETE FROM Type WHERE name=${name}`;
-
-      console.log('Delete type query ' + query);
       const result = await this.knex.raw(query);
       return true;
     } catch (error) {

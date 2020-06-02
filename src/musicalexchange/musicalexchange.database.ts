@@ -1,14 +1,16 @@
 import { MusicalExchangeDto } from './musicalexchange.dto';
 import { DataBaseConnection } from 'src/app.database';
 import { Injectable } from '@nestjs/common';
-import { EmailService } from 'src/shared/services/email.service'
+import { EmailService } from 'src/shared/services/email.service';
 import { MusicalGroupDataBaseConnection } from '../musicalgroup/musicalgroup.database';
 
 @Injectable()
 export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   knex;
-  constructor(private readonly emailService?: EmailService,
-    private readonly mgroupDataBaseConnection?: MusicalGroupDataBaseConnection) {
+  constructor(
+    private readonly emailService?: EmailService,
+    private readonly mgroupDataBaseConnection?: MusicalGroupDataBaseConnection,
+  ) {
     super();
   }
 
@@ -33,7 +35,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
     try {
       let query = `SELECT idMGroupA, idMGroupB, date, place, MusicalExchange.description, repertoire, neededMoney, crowdfundingLink FROM MusicalExchange JOIN MGroup AS MGroupA ON MGroupA.id=MusicalExchange.idMGroupA JOIN MGroup AS MGroupB ON MGroupB.id=MusicalExchange.idMGroupB WHERE MusicalExchange.id=${id}`;
       const result = await this.knex.raw(query);
-      console.log('Resultado de id: ' + result[0]);
       return result[0];
     } catch (error) {
       console.log('Error al obtener el intercambios con el id.');
@@ -41,17 +42,8 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
   }
 
   async addNewMusicalExchange(musicalexchangeDto: MusicalExchangeDto) {
-    /*console.log('id: ' + musicalexchangeDto.id);
-    console.log('idMGroupA: ' + musicalexchangeDto.idMGroupA);
-    console.log('idMGroupB: ' + musicalexchangeDto.idMGroupB);
-    console.log('description: ' + musicalexchangeDto.description);
-    console.log('neededMoney: ' + musicalexchangeDto.neededMoney);
-    console.log('crowdfundingLink: ' + musicalexchangeDto.crowdfundingLink);*/
-    console.log('date: ' + musicalexchangeDto.date);
-
     //Pasamos la fecha recibida a tipo String
     var fecha = musicalexchangeDto.date.toLocaleString();
-    console.log('fecha: ' + fecha);
 
     if (musicalexchangeDto.idMGroupA == musicalexchangeDto.idMGroupB) {
       console.log(
@@ -70,13 +62,23 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
 
     try {
       await this.knex.raw(query);
-      const emails = await this.getEmailsOfUsersSuscriptedToAgrupation(musicalexchangeDto.idMGroupA, musicalexchangeDto.idMGroupB);
+      const emails = await this.getEmailsOfUsersSuscriptedToAgrupation(
+        musicalexchangeDto.idMGroupA,
+        musicalexchangeDto.idMGroupB,
+      );
 
-      const mgroupA = await this.mgroupDataBaseConnection.getMusicalGroup(musicalexchangeDto.idMGroupA);
-      const mgroupB = await this.mgroupDataBaseConnection.getMusicalGroup(musicalexchangeDto.idMGroupB);
+      const mgroupA = await this.mgroupDataBaseConnection.getMusicalGroup(
+        musicalexchangeDto.idMGroupA,
+      );
+      const mgroupB = await this.mgroupDataBaseConnection.getMusicalGroup(
+        musicalexchangeDto.idMGroupB,
+      );
 
-
-      this.emailService.sendNewMusicalExchangeEmail(emails, mgroupA[0].name, mgroupB[0].name)
+      this.emailService.sendNewMusicalExchangeEmail(
+        emails,
+        mgroupA[0].name,
+        mgroupB[0].name,
+      );
 
       return true;
     } catch (error) {
@@ -115,19 +117,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
       let query = `DELETE FROM MusicalExchange WHERE id=${musicalexchangeId}`;
       const result = await this.knex.raw(query);
       return true;
-      /*
-      if ((await this.getMusicalExchange(musicalexchangeId)).length > 0) {
-        console.log(
-          'No se puede eliminar porque tiene un intercambio pendiente',
-        );
-        //TODO: Tiene que saltar una excepción para mostrársela al usuario
-        return false;
-      }
-      let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${musicalexchangeId}`;
-      const result = await this.knex.raw(query);
-
-      return true;
-      */
     } catch (error) {
       console.log('No se puede eliminar el intercambio');
       return false;
@@ -148,24 +137,29 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
     }
   }
 
-
-  async getEmailsOfUsersSuscriptedToAgrupation(agrupationA: number, agrupationB: number): Promise<string[]> {
-    let query = await this.knex("User")
-      .select("User.email")
+  async getEmailsOfUsersSuscriptedToAgrupation(
+    agrupationA: number,
+    agrupationB: number,
+  ): Promise<string[]> {
+    let query = await this.knex('User')
+      .select('User.email')
       .innerJoin('Person', 'User.id', 'Person.id')
-      .innerJoin('MGroupSubscription', 'Person.id', 'MGroupSubscription.idPerson')
-      .where(this.knex.raw(`MGroupSubscription.idMGroup = ${agrupationA} OR MGroupSubscription.idMGroup = ${agrupationB}`))
+      .innerJoin(
+        'MGroupSubscription',
+        'Person.id',
+        'MGroupSubscription.idPerson',
+      )
+      .where(
+        this.knex.raw(
+          `MGroupSubscription.idMGroup = ${agrupationA} OR MGroupSubscription.idMGroup = ${agrupationB}`,
+        ),
+      );
 
-
-    var result = []
+    var result = [];
 
     for (var obj of query) {
-      result.push(obj.email)
+      result.push(obj.email);
     }
-
-    console.log(result)
-    return result
-
-
+    return result;
   }
 }
