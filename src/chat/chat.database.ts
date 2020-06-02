@@ -66,7 +66,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
 
       let query2 = `UPDATE ChatMessage SET viewed='true' WHERE ChatMessage.idChat=${idChat} AND ChatMessage.participantId=${idB}`;
       await this.knex.raw(query2);
-      //console.log('He actualizado a true la variable viewed');
+      console.log('He actualizado a true la variable viewed, id: ' + idA);
 
       let query = `SELECT content, participantId, timestamp, viewed ,'text' AS 'type', 'true' AS 'uploaded'
                     FROM ChatMessage JOIN Chat ON Chat.id=ChatMessage.idChat
