@@ -13,16 +13,10 @@ import { ChatDto } from '../chat/chat.dto';
 import { MessageDto } from '../chat/message.dto';
 import { ChatService } from '../chat/chat.service';
 import { ChatDataBaseConnection } from './chat.database';
-/*
-import { AuthGuard } from '../guards/auth.guard';
-import { Requester } from '../shared/entities/requester';
-import { AuthUser } from '../shared/decorators/requester.decorator';
-import { RequesterRole } from '../shared/enums/requester-role.enum';
-*/
 
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService) { }
 
   /**
    * Se obtienen los datos de un usuario dado el id

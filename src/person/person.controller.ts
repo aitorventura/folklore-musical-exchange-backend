@@ -22,7 +22,7 @@ export class PersonController {
   constructor(
     private readonly personService: PersonService,
     private readonly subscriptionService: SubscriptionService,
-  ) {}
+  ) { }
 
   @Get()
   @UseGuards(AuthGuard)
@@ -66,7 +66,7 @@ export class PersonController {
     }
 
     let personDto: PersonDto = personAndSubscriptions.person;
-    let subscriptions: string[] = personAndSubscriptions.subscriptions.subs; //Array.prototype.slice.call(personAndSubscriptions.subscriptions,);
+    let subscriptions: string[] = personAndSubscriptions.subscriptions.subs;
 
     personDto.id = parseInt(id);
 

@@ -1,4 +1,3 @@
-
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
@@ -16,7 +15,7 @@ var mailOptions = {
   text: 'That was easy!'
 };
 
-transporter.sendMail(mailOptions, function(error, info){
+transporter.sendMail(mailOptions, function (error, info) {
   if (error) {
     console.log(error);
   } else {

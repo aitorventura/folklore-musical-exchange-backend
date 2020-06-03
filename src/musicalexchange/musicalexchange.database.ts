@@ -91,7 +91,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
       console.log(
         'Selecciona la otra agrupación con la que quieres hacer el intercambio',
       );
-      //TODO: Debería salir una excepción
       return false;
     }
     let query = `UPDATE MusicalExchange SET idMGroupA = ${musicalExchangeDto.idMGroupA},
@@ -123,7 +122,6 @@ export class MusicalExchangeDataBaseConnection extends DataBaseConnection {
     }
   }
 
-  //Ya se verá el uso, hay que rehacerlo (depende de si se busca todos los intercambios de esa persona o solo los nuevos, etc)
   async getMusicalExchangeMGroup(mgroupId: number) {
     try {
       let query = `SELECT * FROM MusicalExchange 

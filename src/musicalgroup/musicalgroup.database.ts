@@ -51,10 +51,8 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
     musicalgroupDto.role = 'MGROUP';
 
     const isAdded = await this.addNewUser(musicalgroupDto);
-    //console.log('Resultado isadded: ' + isAdded);
     if (isAdded != 0) {
       //Si ha habido un problema devuelvo el código
-      //console.log('Return: ' + isAdded);
       return isAdded;
     }
 
@@ -95,10 +93,8 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
     musicalGroupDto.role = 'MGROUP';
     const updated = await this.updateUser(musicalGroupDto);
-    //console.log('Resultado: ' + updated);
+
     if (updated != 0) {
-      //  console.log('Resultado: ' + updated);
-      //Si ha habido un problema devuelvo el código
       return updated;
     }
 
@@ -114,7 +110,6 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
         return 0;
       }
     } catch (error) {
-      //  console.log('Error update mgroup');
       return 4;
     }
   }
@@ -125,7 +120,6 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
         console.log(
           'No se puede eliminar porque tiene un intercambio pendiente',
         );
-        //TODO: Tiene que saltar una excepción para mostrársela al usuario
         return false;
       }
       let query = `UPDATE User SET dateUnsubscribe = CURRENT_TIMESTAMP WHERE id=${musicalgroupId}`;
@@ -133,7 +127,6 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
 
       return true;
     } catch (error) {
-      //  console.log('No se puede porque tiene intercambios');
       return false;
     }
   }
@@ -158,14 +151,11 @@ export class MusicalGroupDataBaseConnection extends UserDataBaseConnection {
       .innerJoin('TypeSubscription', 'Person.id', 'TypeSubscription.idPerson')
       .where(this.knex.raw(`TypeSubscription.nameType = '${type}'`));
 
-    //console.log(query.toString())
     var result = [];
 
     for (var obj of query) {
       result.push(obj.email);
     }
-
-    //console.log(result)
     return result;
   }
 }

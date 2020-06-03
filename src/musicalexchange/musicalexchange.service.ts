@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { MusicalExchangeDto } from './musicalexchange.dto';
-import { DataBaseConnection } from '../app.database';
 import { MusicalExchangeDataBaseConnection } from './musicalexchange.database';
 
 @Injectable()
 export class MusicalExchangeService {
-  constructor(private readonly dataBase: MusicalExchangeDataBaseConnection) {}
+  constructor(private readonly dataBase: MusicalExchangeDataBaseConnection) { }
 
   async getMusicalExchanges() {
     return await this.dataBase.getMusicalExchanges();

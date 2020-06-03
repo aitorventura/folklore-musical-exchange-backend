@@ -62,11 +62,8 @@ export class ChatDataBaseConnection extends DataBaseConnection {
     try {
       let idChat = await this.getIdChat(idA, idB);
 
-      //MyId - P
-
       let query2 = `UPDATE ChatMessage SET viewed='true' WHERE ChatMessage.idChat=${idChat} AND ChatMessage.participantId=${idB}`;
       await this.knex.raw(query2);
-      console.log('He actualizado a true la variable viewed, id: ' + idA);
 
       let query = `SELECT content, participantId, timestamp, viewed ,'text' AS 'type', 'true' AS 'uploaded'
                     FROM ChatMessage JOIN Chat ON Chat.id=ChatMessage.idChat
@@ -81,7 +78,6 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getMyself(id: number) {
-    //console.log('getChats(id) bbdd: ' + id);
     try {
       console.log('getMyself BBDD: ');
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
@@ -89,8 +85,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     WHERE id=${id}`;
       console.log(query);
       const result = await this.knex.raw(query);
-      //console.log('Resultado de id: ' + result[0]);
-      //console.log('Se obtiene myself');
+
       return result[0];
     } catch (error) {
       console.log('Error al obtener myself.');
@@ -98,7 +93,6 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getParticipant(id: number) {
-    //console.log('getParticipant BBDD');
     try {
       let query = `SELECT id, username AS 'name', image AS 'profilePicture'
                     FROM User
@@ -111,7 +105,6 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getContrario(idChat: number, id: number) {
-    //Obtenemos el código del participante del chat
     try {
       let query = `SELECT 
                       CASE 
@@ -121,8 +114,6 @@ export class ChatDataBaseConnection extends DataBaseConnection {
                     FROM Chat
                     WHERE Chat.id=${idChat}`;
       const result = await this.knex.raw(query);
-      //Se devuelve el id del otro participante
-      //Se obtienen los participantes del chat dado un id.
       return result[0].map(x => x.id);
     } catch (error) {
       console.log('Error al obtener los participantes del chat dado un id.');
@@ -131,13 +122,11 @@ export class ChatDataBaseConnection extends DataBaseConnection {
 
   async createMessage(idA: number, idB: number, messageDto: MessageDto) {
     let idChat = await this.getIdChat(idA, idB);
-    console.log('Voy a añadir el mensaje');
     try {
       let query = `INSERT INTO ChatMessage(idChat, content, timestamp, participantId, viewed) 
                     VALUES (${idChat}, '${messageDto.content}', '${messageDto.timestamp}', ${messageDto.participantId}, 'false')`;
       console.log(query);
       await this.knex.raw(query);
-      //Todo ha salido bien
       console.log('Se ha enviado el mensaje');
       return 0;
     } catch (error) {
@@ -147,12 +136,10 @@ export class ChatDataBaseConnection extends DataBaseConnection {
   }
 
   async getIdChat(idA: number, idB: number) {
-    //Obtenemos el código del participante del chat
     try {
       let query = `SELECT id FROM Chat WHERE (Chat.idA=${idA} OR Chat.idB=${idA}) AND (Chat.idA=${idB} OR Chat.idB=${idB})`;
       const result = await this.knex.raw(query);
-      //Se devuelve el id del otro participante
-      //Se obtienen los participantes del chat dado un id.
+
       let id = result[0].map(x => x.id);
       if (id.length === 0) {
         //No existe ese chat, lo voy a crear.
@@ -167,9 +154,7 @@ export class ChatDataBaseConnection extends DataBaseConnection {
       }
       return id;
     } catch (error) {
-      //console.log('Entro en el catch');
       console.log('Error al obtener el id del chat.');
     }
   }
-  //async getUnread(){}
 }

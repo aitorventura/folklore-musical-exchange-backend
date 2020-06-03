@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ChatDto } from './chat.dto';
 import { MessageDto } from './message.dto';
-import { DataBaseConnection } from '../app.database';
 import { ChatDataBaseConnection } from './chat.database';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly dataBase: ChatDataBaseConnection) {}
+  constructor(private readonly dataBase: ChatDataBaseConnection) { }
 
   async getChats(id: number) {
     return await this.dataBase.getChats(id);
