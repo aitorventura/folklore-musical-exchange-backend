@@ -24,7 +24,7 @@
     "@nestjs/core": "^6.10.14",
     "@nestjs/platform-express": "^6.10.14",
     "@nestjs/typeorm": "^6.3.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "class-transformer": "^0.2.3",
     "cloudinary": "^1.21.0",
     "jsonwebtoken": "^8.5.1",
